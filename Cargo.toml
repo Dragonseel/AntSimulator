@@ -1,0 +1,2 @@
+[workspace]
+members = ["ant_bin","ant_lib"]
