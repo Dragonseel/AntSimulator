@@ -36,12 +36,12 @@ impl AntLogic for Logic {
 
                     let food_pos = food.borrow().get_position();
 
-                    let own_direction = Direction::new(
+                    let own_direction = Vector2D::new(
                         ant.get_rotation().get_rad().cos(),
                         -ant.get_rotation().get_rad().sin(),
                     );
 
-                    let mut food_direction: Direction = food_pos - ant.position;
+                    let mut food_direction: Vector2D = food_pos - ant.position;
                     food_direction.normalize();
 
                     let angle = food_direction.y().atan2(food_direction.x())

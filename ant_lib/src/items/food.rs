@@ -3,7 +3,7 @@ use crate::support::camera::Camera;
 use glium::{Display, Frame};
 
 pub struct FoodPellet {
-    position: Position,
+    position: Vector2D,
     nutrition: i32,
     bite_size: i32,
 
@@ -14,29 +14,29 @@ pub struct FoodPellet {
 impl FoodPellet {
     pub fn new(nut: i32, display: &Display, bite_size: i32) -> FoodPellet {
         FoodPellet {
-            position: Position::new(0.0, 0.0),
+            position: Vector2D::new(0.0, 0.0),
             nutrition: nut,
             bite_size,
             rect: crate::primitives::rectangle::Rectangle::new(
-                [5.0, 5.0],
-                [0.0, 0.0],
-                0.0f32,
-                BLUE.get_data(),
+                Vector2D::new(5.0, 5.0),
+                Vector2D::new(0.0, 0.0),
+                Rotation::new_rad(0.0),
+                BLUE,
                 display,
             ),
         }
     }
 
-    pub fn new_at_pos(pos: Position, nut: i32, display: &Display, bite_size: i32) -> FoodPellet {
+    pub fn new_at_pos(pos: Vector2D, nut: i32, display: &Display, bite_size: i32) -> FoodPellet {
         FoodPellet {
             position: pos,
             nutrition: nut,
             bite_size,
             rect: crate::primitives::rectangle::Rectangle::new(
-                [5.0, 5.0],
-                [pos.x(), pos.y()],
-                0.0f32,
-                BLUE.get_data(),
+                Vector2D::new(5.0, 5.0),
+                pos,
+                Rotation::new_rad(0.0),
+                BLUE,
                 display,
             ),
         }
@@ -46,7 +46,7 @@ impl FoodPellet {
         self.rect.draw(target, cam);
     }
 
-    pub fn get_position(&self) -> Position {
+    pub fn get_position(&self) -> Vector2D {
         self.position
     }
 

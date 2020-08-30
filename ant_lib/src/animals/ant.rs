@@ -30,12 +30,12 @@ impl std::fmt::Display for Action {
 }
 
 pub struct Ant {
-    pub position: Position,
+    pub position: Vector2D,
     pub energy: i32,
     pub id: i32,
     color: Color,
     rotation: Rotation,
-    size: Size,
+    size: Vector2D,
     speed: f32,
     angular_speed: f32,
     max_energy: i32,
@@ -46,22 +46,27 @@ pub struct Ant {
 
 impl Ant {
     pub fn new(id: i32, config: &AntConfig, display: &Display) -> Ant {
+        let size = Vector2D::new(16.0, 7.0);
+        let position = Vector2D::new(50.0, 50.0);
+        let rotation = Rotation::new_rad(0.0f32);
+        let color = Color::new(1.0f32, 0.0f32, 0.0f32, 1.0f32);
+
         Ant {
             id,
-            position: Position::new(50.0, 50.0),
-            color: Color::new(1.0f32, 0.0f32, 0.0f32, 1.0f32),
-            rotation: Rotation::new_rad(0.0f32),
-            size: Size::new(16.0f32, 7.0f32),
+            position,
+            color,
+            rotation,
+            size: size,
             speed: config.speed,
             angular_speed: config.angular_speed,
             energy: config.max_energy,
             max_energy: config.max_energy,
             mouth_reach: config.mouth_reach,
-            rect: Rectangle::new([16.0, 7.0], [50.0, 50.0], 0.0, RED.get_data(), display),
+            rect: Rectangle::new(size, position, rotation, color, display),
         }
     }
 
-    pub fn new_at(id: i32, config: &AntConfig, pos: Position, display: &Display) -> Ant {
+    pub fn new_at(id: i32, config: &AntConfig, pos: Vector2D, display: &Display) -> Ant {
         let mut ant = Ant::new(id, config, display);
         ant.position = pos;
         ant
@@ -116,7 +121,7 @@ impl Ant {
     fn go_forward(&mut self, length: f32) {
         let movement_amount = self.speed.min(length).max(-self.speed);
 
-        self.position += Direction::new(
+        self.position += Vector2D::new(
             self.rotation.get_rad().cos(),
             -self.rotation.get_rad().sin(),
         ) * movement_amount;
@@ -134,8 +139,8 @@ impl Ant {
 // Graphics
 impl Ant {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.position = self.position.get_data();
-        self.rect.rotation = self.rotation.get_rad();
+        self.rect.position = self.position + 0.5 * self.size;
+        self.rect.rotation = self.rotation;
         self.rect.draw(target, cam);
     }
 }

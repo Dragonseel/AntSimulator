@@ -10,7 +10,7 @@ use std::cell::RefCell;
 use std::{rc::Rc, time::Duration};
 
 pub struct Ground<F: AntLogic> {
-    size: Size,
+    size: Vector2D,
     food: Vec<Rc<RefCell<FoodPellet>>>,
     ants: Vec<Rc<RefCell<Ant>>>,
     food_timer: i32,
@@ -27,7 +27,7 @@ impl<F> Ground<F>
 where
     F: AntLogic,
 {
-    pub fn new_empty(size: Size, ant_func: F, display: &Display) -> Ground<F> {
+    pub fn new_empty(size: Vector2D, ant_func: F, display: &Display) -> Ground<F> {
         let config = Config::new();
 
         Ground {
@@ -37,10 +37,10 @@ where
             food_timer: config.food.spawn_time,
             rng: rand::thread_rng(),
             rect: crate::primitives::rectangle::Rectangle::new(
-                [size.x(), size.y()],
-                [0.0, 0.0],
-                0.0f32,
-                GREEN.get_data(),
+                size,
+                Vector2D::new(0.0, 0.0),
+                Rotation::new_rad(0.0),
+                GREEN,
                 display,
             ),
             config,
@@ -76,7 +76,7 @@ where
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
             let new_food = FoodPellet::new_at_pos(
-                Position::new(x, y),
+                Vector2D::new(x, y),
                 self.config.food.nutrition,
                 display,
                 self.config.food.eaten_value,
@@ -90,7 +90,7 @@ where
             let x: f32 = self.rng.gen::<f32>() * self.size.x();
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
-            let ant = Ant::new_at(i, &self.config.ants, Position::new(x, y), display);
+            let ant = Ant::new_at(i, &self.config.ants, Vector2D::new(x, y), display);
             self.ants.push(Rc::new(RefCell::new(ant)));
         }
     }
@@ -105,25 +105,25 @@ where
         self.food_timer = self.config.food.spawn_time;
     }
 
-    fn push_ant_into_boundary(ant: &Rc<RefCell<Ant>>, size: Size) {
+    fn push_ant_into_boundary(ant: &Rc<RefCell<Ant>>, size: Vector2D) {
         if ant.borrow_mut().position.x() < 0.0 {
             let old_pos = ant.borrow().position.y();
-            ant.borrow_mut().position = Position::new(0.0, old_pos);
+            ant.borrow_mut().position = Vector2D::new(0.0, old_pos);
         }
 
         if ant.borrow_mut().position.x() > size.x() {
             let old_pos = ant.borrow().position.y();
-            ant.borrow_mut().position = Position::new(size.x(), old_pos);
+            ant.borrow_mut().position = Vector2D::new(size.x(), old_pos);
         }
 
         if ant.borrow_mut().position.y() < 0.0 {
             let old_pos = ant.borrow().position.x();
-            ant.borrow_mut().position = Position::new(old_pos, 0.0);
+            ant.borrow_mut().position = Vector2D::new(old_pos, 0.0);
         }
 
         if ant.borrow_mut().position.y() > size.y() {
             let old_pos = ant.borrow().position.x();
-            ant.borrow_mut().position = Position::new(old_pos, size.y());
+            ant.borrow_mut().position = Vector2D::new(old_pos, size.y());
         }
     }
 

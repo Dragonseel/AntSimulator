@@ -1,6 +1,6 @@
 use crate::{
     ground,
-    prelude::Size,
+    prelude::Vector2D,
     support::{self, camera::Camera},
     AntLogic,
 };
@@ -27,7 +27,8 @@ where
     where
         F: AntLogic,
     {
-        let mut ground = ground::Ground::new_empty(Size::new(1000.0, 1000.0), ant_func, display);
+        let mut ground =
+            ground::Ground::new_empty(Vector2D::new(1000.0, 1000.0), ant_func, display);
         ground.generate_ants(10, display);
         ground.generate_random_food(10, display);
 

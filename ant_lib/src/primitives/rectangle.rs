@@ -2,22 +2,27 @@ use super::vertex::Vertex;
 use crate::support::camera::Camera;
 use glium::{index::IndexBuffer, uniform, Display, Frame, Program, Surface, VertexBuffer};
 
+use crate::{
+    helper::{Rotation, Vector2D},
+    prelude::Color,
+};
+
 pub struct Rectangle {
     vertex_buffer: VertexBuffer<Vertex>,
     program: Program,
     indices: IndexBuffer<u32>,
-    pub rotation: f32,
-    pub position: [f32; 2],
-    pub color: [f32; 4],
-    pub size: [f32; 2],
+    pub rotation: Rotation,
+    pub position: Vector2D,
+    pub color: Color,
+    pub size: Vector2D,
 }
 
 impl Rectangle {
     pub fn new(
-        size: [f32; 2],
-        position: [f32; 2],
-        rotation: f32,
-        color: [f32; 4],
+        size: Vector2D,
+        position: Vector2D,
+        rotation: Rotation,
+        color: Color,
         display: &Display,
     ) -> Rectangle {
         //      x
@@ -33,10 +38,10 @@ impl Rectangle {
         //  2--------3
         // at rotation 0
         //
-        let vertex0 = Vertex::new([0.0, 0.0], color);
-        let vertex1 = Vertex::new([size[0], 0.0], color);
-        let vertex2 = Vertex::new([0.0, size[1]], color);
-        let vertex3 = Vertex::new([size[0], size[1]], color);
+        let vertex0 = Vertex::new([0.0, 0.0], color.get_data());
+        let vertex1 = Vertex::new([size.x(), 0.0], color.get_data());
+        let vertex2 = Vertex::new([0.0, size.y()], color.get_data());
+        let vertex3 = Vertex::new([size.x(), size.y()], color.get_data());
         let shape = vec![vertex0, vertex1, vertex2, vertex3];
 
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
@@ -90,10 +95,20 @@ void main() {
 
     pub fn draw(&mut self, frame: &mut Frame, cam: &Camera) {
         let model_mat = [
-            [self.rotation.cos(), -self.rotation.sin(), 0.0, 0.0],
-            [self.rotation.sin(), self.rotation.cos(), 0.0, 0.0],
+            [
+                self.rotation.get_rad().cos(),
+                -self.rotation.get_rad().sin(),
+                0.0,
+                0.0,
+            ],
+            [
+                self.rotation.get_rad().sin(),
+                self.rotation.get_rad().cos(),
+                0.0,
+                0.0,
+            ],
             [0.0, 0.0, 1.0, 0.0],
-            [self.position[0], self.position[1], 0.0, 1.0f32],
+            [self.position.x(), self.position.y(), 0.0, 1.0f32],
         ];
 
         let uniforms = uniform! {
