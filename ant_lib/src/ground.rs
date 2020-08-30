@@ -9,8 +9,6 @@ use glium::{Display, Frame};
 use std::cell::RefCell;
 use std::{rc::Rc, time::Duration};
 
-pub const FOOD_RESPAWN_TIME: i32 = 250;
-
 pub struct Ground<F: AntLogic> {
     size: Size,
     food: Vec<Rc<RefCell<FoodPellet>>>,
@@ -92,11 +90,7 @@ where
             let x: f32 = self.rng.gen::<f32>() * self.size.x();
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
-            let mut ant = Ant::new(display, i);
-            ant.position = Position::new(x, y);
-            ant.angular_speed = self.config.ants.angular_speed;
-            ant.energy = self.config.ants.max_energy;
-            ant.speed = self.config.ants.speed;
+            let ant = Ant::new_at(i, &self.config.ants, Position::new(x, y), display);
             self.ants.push(Rc::new(RefCell::new(ant)));
         }
     }

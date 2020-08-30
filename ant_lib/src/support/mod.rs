@@ -10,6 +10,8 @@ use std::time::{Duration, Instant};
 
 pub mod camera;
 mod clipboard;
+pub mod simulator;
+pub mod ui;
 
 pub struct System {
     pub event_loop: EventLoop<()>,

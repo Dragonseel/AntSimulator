@@ -2,6 +2,8 @@ use ant_lib::prelude::*;
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
+use rand::Rng;
+
 struct Logic {}
 
 impl AntLogic for Logic {
@@ -25,7 +27,7 @@ impl AntLogic for Logic {
 
         let action = if let Some(food) = closest_food {
             if let Some(food) = food.upgrade() {
-                if min_dist < ant.mouth_reach {
+                if min_dist < ant.get_mouth_reach() {
                     // Ant is at Food
 
                     Action::EatFood(Rc::clone(&food))
@@ -34,8 +36,10 @@ impl AntLogic for Logic {
 
                     let food_pos = food.borrow().get_position();
 
-                    let own_direction =
-                        Direction::new(ant.rotation.get_rad().cos(), -ant.rotation.get_rad().sin());
+                    let own_direction = Direction::new(
+                        ant.get_rotation().get_rad().cos(),
+                        -ant.get_rotation().get_rad().sin(),
+                    );
 
                     let mut food_direction: Direction = food_pos - ant.position;
                     food_direction.normalize();
@@ -43,9 +47,9 @@ impl AntLogic for Logic {
                     let angle = food_direction.y().atan2(food_direction.x())
                         - own_direction.y().atan2(own_direction.x());
 
-                    if angle > 0.5 * ant.angular_speed {
+                    if angle > 0.5 * ant.get_angular_speed() {
                         Action::RotateLeft(angle.abs())
-                    } else if angle < -0.5 * ant.angular_speed {
+                    } else if angle < -0.5 * ant.get_angular_speed() {
                         Action::RotateRight(angle.abs())
                     } else {
                         Action::GoForward(100.0)
@@ -55,7 +59,15 @@ impl AntLogic for Logic {
                 Action::Nothing
             }
         } else {
-            rand::random()
+            match rand::thread_rng().gen_range(0, 7) {
+                0 => Action::RotateLeft(90.0),
+                1 => Action::RotateRight(90.0),
+                2 => Action::GoForward(100.0),
+                3 => Action::GoForward(100.0),
+                4 => Action::GoForward(100.0),
+                5 => Action::GoForward(100.0),
+                _ => Action::GoForward(100.0),
+            }
         };
 
         action

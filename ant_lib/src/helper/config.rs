@@ -12,6 +12,7 @@ pub struct AntConfig {
     pub vision_range: f32,
     pub energy_loss: i32,
     pub start_amount: i32,
+    pub mouth_reach: f32,
 }
 impl AntConfig {
     pub fn new() -> AntConfig {
@@ -22,6 +23,7 @@ impl AntConfig {
             vision_range: 100.0,
             energy_loss: 1,
             start_amount: 30,
+            mouth_reach: 10.0,
         }
     }
 }

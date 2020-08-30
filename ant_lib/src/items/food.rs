@@ -1,5 +1,7 @@
-use crate::{helper::*, support::camera::Camera};
+use crate::helper::*;
+use crate::support::camera::Camera;
 use glium::{Display, Frame};
+
 pub struct FoodPellet {
     position: Position,
     nutrition: i32,
