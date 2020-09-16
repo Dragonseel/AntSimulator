@@ -38,10 +38,10 @@ impl Rectangle {
         //  2--------3
         // at rotation 0
         //
-        let vertex0 = Vertex::new([0.0, 0.0], color.get_data());
-        let vertex1 = Vertex::new([size.x(), 0.0], color.get_data());
-        let vertex2 = Vertex::new([0.0, size.y()], color.get_data());
-        let vertex3 = Vertex::new([size.x(), size.y()], color.get_data());
+        let vertex0 = Vertex::new([-0.5 * size.x(), -0.5 * size.y()], color.get_data());
+        let vertex1 = Vertex::new([0.5 * size.x(), -0.5 * size.y()], color.get_data());
+        let vertex2 = Vertex::new([-0.5 * size.x(), 0.5 * size.y()], color.get_data());
+        let vertex3 = Vertex::new([0.5 * size.x(), 0.5 * size.y()], color.get_data());
         let shape = vec![vertex0, vertex1, vertex2, vertex3];
 
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();

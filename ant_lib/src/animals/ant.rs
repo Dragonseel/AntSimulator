@@ -139,7 +139,7 @@ impl Ant {
 // Graphics
 impl Ant {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.position = self.position + 0.5 * self.size;
+        self.rect.position = self.position - 0.5 * self.size;// * self.rotation);
         self.rect.rotation = self.rotation;
         self.rect.draw(target, cam);
     }

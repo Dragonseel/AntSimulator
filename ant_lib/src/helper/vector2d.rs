@@ -1,3 +1,4 @@
+use super::Rotation;
 use std::ops::{Add, AddAssign, Mul, Sub};
 
 #[derive(Debug, Copy, Clone)]
@@ -72,5 +73,16 @@ impl Mul<Vector2D> for f32 {
     type Output = Vector2D;
     fn mul(self, rhs: Vector2D) -> Self::Output {
         Vector2D::new(self * rhs.x(), self * rhs.y())
+    }
+}
+
+impl Mul<Rotation> for Vector2D {
+    type Output = Vector2D;
+    fn mul(self, rhs: Rotation) -> Self::Output {
+        let beta = rhs.get_rad();
+        Vector2D::new(
+            beta.cos() * self.x() - beta.sin() * self.y(),
+            beta.sin() * self.x() + beta.cos() * self.y(),
+        )
     }
 }

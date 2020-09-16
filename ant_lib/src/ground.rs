@@ -38,7 +38,7 @@ where
             rng: rand::thread_rng(),
             rect: crate::primitives::rectangle::Rectangle::new(
                 size,
-                Vector2D::new(0.0, 0.0),
+                0.5* size, //Vector2D::new(0.0, 0.0),
                 Rotation::new_rad(0.0),
                 GREEN,
                 display,

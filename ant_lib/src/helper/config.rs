@@ -23,7 +23,7 @@ impl AntConfig {
             vision_range: 100.0,
             energy_loss: 1,
             start_amount: 30,
-            mouth_reach: 10.0,
+            mouth_reach: 5.0,
         }
     }
 }

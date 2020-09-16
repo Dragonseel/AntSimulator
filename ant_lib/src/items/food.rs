@@ -19,7 +19,7 @@ impl FoodPellet {
             bite_size,
             rect: crate::primitives::rectangle::Rectangle::new(
                 Vector2D::new(5.0, 5.0),
-                Vector2D::new(0.0, 0.0),
+                Vector2D::new(2.5, 2.5),
                 Rotation::new_rad(0.0),
                 BLUE,
                 display,
