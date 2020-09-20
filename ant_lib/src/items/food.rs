@@ -4,15 +4,15 @@ use glium::{Display, Frame};
 
 pub struct FoodPellet {
     position: Vector2D,
-    nutrition: i32,
-    bite_size: i32,
+    nutrition: u32,
+    bite_size: u32,
 
     //technical
     rect: crate::primitives::rectangle::Rectangle,
 }
 
 impl FoodPellet {
-    pub fn new(nut: i32, display: &Display, bite_size: i32) -> FoodPellet {
+    pub fn new(nut:u32, display: &Display, bite_size: u32) -> FoodPellet {
         FoodPellet {
             position: Vector2D::new(0.0, 0.0),
             nutrition: nut,
@@ -27,7 +27,7 @@ impl FoodPellet {
         }
     }
 
-    pub fn new_at_pos(pos: Vector2D, nut: i32, display: &Display, bite_size: i32) -> FoodPellet {
+    pub fn new_at_pos(pos: Vector2D, nut:u32, display: &Display, bite_size: u32) -> FoodPellet {
         FoodPellet {
             position: pos,
             nutrition: nut,
@@ -50,12 +50,12 @@ impl FoodPellet {
         self.position
     }
 
-    pub fn get_eaten(&mut self) -> i32 {
-        if self.nutrition > 0 {
+    pub fn get_eaten(&mut self) -> u32 {
+        if self.nutrition >= self.bite_size {
             self.nutrition -= self.bite_size;
             self.bite_size
         } else {
-            0
+            self.nutrition
         }
     }
 

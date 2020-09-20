@@ -31,15 +31,15 @@ impl std::fmt::Display for Action {
 
 pub struct Ant {
     pub position: Vector2D,
-    pub energy: i32,
+    pub energy: u32,
     pub id: i32,
     color: Color,
-    rotation: Rotation,
+    pub rotation: Rotation,
     size: Vector2D,
     speed: f32,
-    angular_speed: f32,
-    max_energy: i32,
-    mouth_reach: f32,
+    pub angular_speed: f32,
+    max_energy: u32,
+    pub mouth_reach: f32,
     // Graphics
     rect: Rectangle,
 }
@@ -73,7 +73,7 @@ impl Ant {
     }
 
     pub fn is_alive(&self) -> bool {
-        self.energy > 0
+        self.energy != 0
     }
 
     pub fn update<F>(&mut self, other_elements: Vec<Vision>, ant_func: &mut F, _dt: Duration)
@@ -91,31 +91,25 @@ impl Ant {
 }
 
 // Getters
-impl Ant {
-    pub fn get_mouth_reach(&self) -> f32 {
-        self.mouth_reach
-    }
-
-    pub fn get_angular_speed(&self) -> f32 {
-        self.angular_speed
-    }
-
-    pub fn get_rotation(&self) -> Rotation {
-        self.rotation
-    }
-}
+// impl Ant {
+//     fn get_mouth_position(&self) -> Vector2D {
+//         Vector2D::new(self.position.x()+0.5*self.size.x(), self.position.y())
+//     }
+// }
 
 // Actions
 impl Ant {
     fn eat_food(&mut self, food: Rc<RefCell<FoodPellet>>) {
-        let food_pos = food.borrow().get_position();
-        let food_dir = food_pos - self.position;
-        let dist = food_dir.length();
+        // let food_pos = food.borrow().get_position();
+        // let food_dir = food_pos - self.get_mouth_position();
+        // let dist = food_dir.length();
 
-        if dist < self.mouth_reach {
-            self.energy += food.borrow_mut().get_eaten();
-            self.energy = self.energy.min(self.max_energy);
-        }
+        // if dist < self.mouth_reach {
+        //     self.energy += food.borrow_mut().get_eaten();
+        //     self.energy = self.energy.min(self.max_energy);
+        // }
+        self.energy += food.borrow_mut().get_eaten();
+        self.energy = self.energy.min(self.max_energy);
     }
 
     fn go_forward(&mut self, length: f32) {
@@ -139,7 +133,7 @@ impl Ant {
 // Graphics
 impl Ant {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.position = self.position - 0.5 * self.size;// * self.rotation);
+        self.rect.position = self.position; //- 0.5 * self.size; // * self.rotation);
         self.rect.rotation = self.rotation;
         self.rect.draw(target, cam);
     }

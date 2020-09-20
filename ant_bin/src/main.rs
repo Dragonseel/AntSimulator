@@ -27,7 +27,7 @@ impl AntLogic for Logic {
 
         let action = if let Some(food) = closest_food {
             if let Some(food) = food.upgrade() {
-                if min_dist < ant.get_mouth_reach() {
+                if min_dist < ant.mouth_reach {
                     // Ant is at Food
 
                     Action::EatFood(Rc::clone(&food))
@@ -37,8 +37,8 @@ impl AntLogic for Logic {
                     let food_pos = food.borrow().get_position();
 
                     let own_direction = Vector2D::new(
-                        ant.get_rotation().get_rad().cos(),
-                        -ant.get_rotation().get_rad().sin(),
+                        ant.rotation.get_rad().cos(),
+                        -ant.rotation.get_rad().sin(),
                     );
 
                     let mut food_direction: Vector2D = food_pos - ant.position;
@@ -47,9 +47,9 @@ impl AntLogic for Logic {
                     let angle = food_direction.y().atan2(food_direction.x())
                         - own_direction.y().atan2(own_direction.x());
 
-                    if angle > 0.5 * ant.get_angular_speed() {
+                    if angle > 0.5 * ant.angular_speed {
                         Action::RotateLeft(angle.abs())
-                    } else if angle < -0.5 * ant.get_angular_speed() {
+                    } else if angle < -0.5 * ant.angular_speed {
                         Action::RotateRight(angle.abs())
                     } else {
                         Action::GoForward(100.0)

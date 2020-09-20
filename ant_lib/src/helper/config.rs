@@ -6,11 +6,11 @@ impl GeneralConfig {
 }
 
 pub struct AntConfig {
-    pub max_energy: i32,
+    pub max_energy: u32,
     pub speed: f32,
     pub angular_speed: f32,
     pub vision_range: f32,
-    pub energy_loss: i32,
+    pub energy_loss: u32,
     pub start_amount: i32,
     pub mouth_reach: f32,
 }
@@ -23,14 +23,14 @@ impl AntConfig {
             vision_range: 100.0,
             energy_loss: 1,
             start_amount: 30,
-            mouth_reach: 5.0,
+            mouth_reach: 7.0,
         }
     }
 }
 
 pub struct FoodConfig {
-    pub nutrition: i32,
-    pub eaten_value: i32,
+    pub nutrition: u32,
+    pub eaten_value: u32,
     pub spawn_time: i32,
     pub start_amount: i32,
 }

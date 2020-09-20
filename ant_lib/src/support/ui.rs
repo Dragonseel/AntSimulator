@@ -1,3 +1,4 @@
+use imgui::Drag;
 use imgui::Ui;
 use imgui::{im_str, ChildWindow, Condition, Window};
 use std::{cell::RefCell, rc::Rc};
@@ -47,72 +48,43 @@ pub fn simulation_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCel
             ui.separator();
             ui.text_colored(helper::RED.get_data(), im_str!("Food"));
 
-            if ui
-                .drag_int(
-                    im_str!("Food Time"),
-                    &mut app_ui.borrow_mut().ground.config.food.spawn_time,
-                )
-                .build()
+            if Drag::new(im_str!("Food Time"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.food.spawn_time)
             {
                 app_ui.borrow_mut().ground.reset_food_time();
             }
 
-            ui.drag_int(
-                im_str!("Food Value"),
-                &mut app_ui.borrow_mut().ground.config.food.nutrition,
-            )
-            .build();
+            Drag::new(im_str!("Food Value"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.food.nutrition);
 
-            ui.drag_int(
-                im_str!("Food Bite Size"),
-                &mut app_ui.borrow_mut().ground.config.food.eaten_value,
-            )
-            .build();
+            Drag::new(im_str!("Food Bite Size"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.food.eaten_value);
 
-            ui.drag_int(
-                im_str!("Food Start Amount"),
-                &mut app_ui.borrow_mut().ground.config.food.start_amount,
-            )
-            .build();
+            Drag::new(im_str!("Food Start Amount"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.food.start_amount);
 
             ui.separator();
             ui.text_colored(helper::RED.get_data(), im_str!("Ants"));
 
-            ui.drag_int(
-                im_str!("Ant Max Energy"),
-                &mut app_ui.borrow_mut().ground.config.ants.max_energy,
-            )
-            .build();
+            Drag::new(im_str!("Ant Max Energy"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.max_energy);
 
-            ui.drag_float(
-                im_str!("Ant Speed"),
-                &mut app_ui.borrow_mut().ground.config.ants.speed,
-            )
-            .build();
+            Drag::new(im_str!("Ant Speed"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.speed);
 
-            ui.drag_float(
-                im_str!("Ant Angular Speed"),
+            Drag::new(im_str!("Ant Angular Speed")).build(
+                ui,
                 &mut app_ui.borrow_mut().ground.config.ants.angular_speed,
-            )
-            .build();
+            );
 
-            ui.drag_float(
-                im_str!("Ant Vision Range"),
-                &mut app_ui.borrow_mut().ground.config.ants.vision_range,
-            )
-            .build();
+            Drag::new(im_str!("Ant Vision Range"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.vision_range);
 
-            ui.drag_int(
-                im_str!("Ant Energy Loss"),
-                &mut app_ui.borrow_mut().ground.config.ants.energy_loss,
-            )
-            .build();
+            Drag::new(im_str!("Ant Energy Loss"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.energy_loss);
 
-            ui.drag_int(
-                im_str!("Ant Start Amount"),
-                &mut app_ui.borrow_mut().ground.config.ants.start_amount,
-            )
-            .build();
+            Drag::new(im_str!("Ant Start Amount"))
+                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.start_amount);
         });
 }
 
