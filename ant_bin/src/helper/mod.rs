@@ -1,7 +1,5 @@
 use crate::animals::ant::Ant;
 use crate::items::food::FoodPellet;
-use std::cell::RefCell;
-use std::rc::Weak;
 
 pub mod config;
 
@@ -15,6 +13,6 @@ pub use rotation::*;
 pub use vector2d::*;
 
 pub enum Vision {
-    Ant(Weak<RefCell<Ant>>, f32),
-    Food(Weak<RefCell<FoodPellet>>, f32),
+    Ant(Ant, f32),
+    Food(FoodPellet, f32),
 }

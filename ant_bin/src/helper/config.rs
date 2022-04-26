@@ -1,4 +1,11 @@
 pub struct GeneralConfig {}
+
+impl Default for GeneralConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl GeneralConfig {
     pub fn new() -> GeneralConfig {
         GeneralConfig {}
@@ -14,6 +21,13 @@ pub struct AntConfig {
     pub start_amount: i32,
     pub mouth_reach: f32,
 }
+
+impl Default for AntConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl AntConfig {
     pub fn new() -> AntConfig {
         AntConfig {
@@ -34,6 +48,12 @@ pub struct FoodConfig {
     pub spawn_time: i32,
     pub start_amount: i32,
 }
+impl Default for FoodConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl FoodConfig {
     pub fn new() -> FoodConfig {
         FoodConfig {
@@ -49,6 +69,12 @@ pub struct Config {
     pub ants: AntConfig,
     pub food: FoodConfig,
     pub general: GeneralConfig,
+}
+
+impl Default for Config {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Config {

@@ -31,8 +31,8 @@ impl Vector2D {
     pub fn normalize(&mut self) {
         let len = self.length();
         if len != 0.0 {
-            self.0[0] = self.0[0] / len;
-            self.0[1] = self.0[1] / len;
+            self.0[0] /= len;
+            self.0[1] /= len;
         }
     }
 

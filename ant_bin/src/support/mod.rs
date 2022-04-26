@@ -39,7 +39,7 @@ pub fn init(title: &str) -> System {
     imgui.set_ini_filename(None);
 
     if let Some(backend) = clipboard::init() {
-        imgui.set_clipboard_backend(Box::new(backend));
+        imgui.set_clipboard_backend(backend);
     } else {
         eprintln!("Failed to initialize clipboard");
     }
@@ -48,7 +48,7 @@ pub fn init(title: &str) -> System {
     {
         let gl_window = display.gl_window();
         let window = gl_window.window();
-        platform.attach_window(imgui.io_mut(), &window, HiDpiMode::Rounded);
+        platform.attach_window(imgui.io_mut(), window, HiDpiMode::Rounded);
     }
 
     let hidpi_factor = platform.hidpi_factor();
@@ -115,7 +115,7 @@ impl System {
             Event::MainEventsCleared => {
                 let gl_window = display.gl_window();
                 platform
-                    .prepare_frame(imgui.io_mut(), &gl_window.window())
+                    .prepare_frame(imgui.io_mut(), gl_window.window())
                     .expect("Failed to prepare frame");
                 gl_window.window().request_redraw();
             }

@@ -1,23 +1,24 @@
-use crate::animals::ant::Ant;
+use crate::animals::ant::{Action, Ant, AntDrawable};
+use crate::ant_impl::AntLogic;
 use crate::helper::*;
-use crate::{items::food::*, support::camera::Camera, AntLogic};
+use crate::{items::food::*, support::camera::Camera};
 
 use rand::prelude::*;
 
 use config::Config;
 use glium::{Display, Frame};
-use std::cell::RefCell;
-use std::{rc::Rc, time::Duration};
+use std::time::Duration;
 
 pub struct Ground<F: AntLogic> {
     size: Vector2D,
-    food: Vec<Rc<RefCell<FoodPellet>>>,
-    ants: Vec<Rc<RefCell<Ant>>>,
+    food: Vec<FoodPelletDrawable>,
+    ants: Vec<AntDrawable>,
     food_timer: i32,
 
     pub config: Config,
 
     // technical
+    next_food_id: usize,
     rng: ThreadRng,
     rect: crate::primitives::rectangle::Rectangle,
     ant_func: F,
@@ -35,6 +36,7 @@ where
             ants: Vec::new(),
             size,
             food_timer: config.food.spawn_time,
+            next_food_id: 0,
             rng: rand::thread_rng(),
             rect: crate::primitives::rectangle::Rectangle::new(
                 size,
@@ -66,6 +68,8 @@ where
         self.ants.clear();
         self.food.clear();
 
+        self.next_food_id = 0;
+
         self.generate_ants(self.config.ants.start_amount, display);
         self.generate_random_food(self.config.food.start_amount, display);
     }
@@ -75,13 +79,16 @@ where
             let x: f32 = self.rng.gen::<f32>() * self.size.x();
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
-            let new_food = FoodPellet::new_at_pos(
+            let new_food = FoodPelletDrawable::new_at_pos(
+                self.next_food_id,
                 Vector2D::new(x, y),
                 self.config.food.nutrition,
                 display,
                 self.config.food.eaten_value,
             );
-            self.food.push(Rc::new(RefCell::new(new_food)));
+            self.food.push(new_food);
+
+            self.next_food_id += 1;
         }
     }
 
@@ -90,8 +97,8 @@ where
             let x: f32 = self.rng.gen::<f32>() * self.size.x();
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
-            let ant = Ant::new_at(i, &self.config.ants, Vector2D::new(x, y), display);
-            self.ants.push(Rc::new(RefCell::new(ant)));
+            let ant = AntDrawable::new_at(i, &self.config.ants, Vector2D::new(x, y), display);
+            self.ants.push(ant);
         }
     }
 }
@@ -105,25 +112,25 @@ where
         self.food_timer = self.config.food.spawn_time;
     }
 
-    fn push_ant_into_boundary(ant: &Rc<RefCell<Ant>>, size: Vector2D) {
-        if ant.borrow_mut().position.x() < 0.0 {
-            let old_pos = ant.borrow().position.y();
-            ant.borrow_mut().position = Vector2D::new(0.0, old_pos);
+    fn push_ant_into_boundary(ant_drawable: &mut AntDrawable, size: Vector2D) {
+        if ant_drawable.ant.position.x() < 0.0 {
+            let old_pos = ant_drawable.ant.position.y();
+            ant_drawable.ant.position = Vector2D::new(0.0, old_pos);
         }
 
-        if ant.borrow_mut().position.x() > size.x() {
-            let old_pos = ant.borrow().position.y();
-            ant.borrow_mut().position = Vector2D::new(size.x(), old_pos);
+        if ant_drawable.ant.position.x() > size.x() {
+            let old_pos = ant_drawable.ant.position.y();
+            ant_drawable.ant.position = Vector2D::new(size.x(), old_pos);
         }
 
-        if ant.borrow_mut().position.y() < 0.0 {
-            let old_pos = ant.borrow().position.x();
-            ant.borrow_mut().position = Vector2D::new(old_pos, 0.0);
+        if ant_drawable.ant.position.y() < 0.0 {
+            let old_pos = ant_drawable.ant.position.x();
+            ant_drawable.ant.position = Vector2D::new(old_pos, 0.0);
         }
 
-        if ant.borrow_mut().position.y() > size.y() {
-            let old_pos = ant.borrow().position.x();
-            ant.borrow_mut().position = Vector2D::new(old_pos, size.y());
+        if ant_drawable.ant.position.y() > size.y() {
+            let old_pos = ant_drawable.ant.position.x();
+            ant_drawable.ant.position = Vector2D::new(old_pos, size.y());
         }
     }
 
@@ -132,19 +139,17 @@ where
         let num_foods = self.food.len();
 
         for i in 0..num_ants {
-            let ant = &self.ants[i];
-
             // fill ant vision of food and other ants
             let ant_vision = self.config.ants.vision_range;
             let mut close_by: Vec<Vision> = Vec::new();
             for j in 0..num_ants {
                 if i != j {
-                    let other_ant = &self.ants[j];
+                    let other_ant = self.ants[j].ant.clone();
 
-                    let distance = ant.borrow().position.distance(other_ant.borrow().position);
+                    let distance = self.ants[i].ant.position.distance(other_ant.position);
 
                     if distance < ant_vision {
-                        close_by.push(Vision::Ant(Rc::downgrade(other_ant), distance));
+                        close_by.push(Vision::Ant(other_ant, distance));
                     }
                 }
             }
@@ -152,26 +157,40 @@ where
             for j in 0..num_foods {
                 let food_item = &self.food[j];
 
-                let distance = ant
-                    .borrow()
+                let distance = self.ants[i]
+                    .ant
                     .position
-                    .distance(food_item.borrow().get_position());
+                    .distance(food_item.food.get_position());
 
                 if distance < ant_vision {
-                    close_by.push(Vision::Food(Rc::downgrade(food_item), distance));
+                    close_by.push(Vision::Food(food_item.food.clone(), distance));
                 }
             }
 
-            ant.borrow_mut().update(close_by, &mut self.ant_func, dt);
-            ant.borrow_mut().energy -= self.config.ants.energy_loss; // Ants have to spend energy to be alive
+            let ant_action = self.ants[i].ant.update(&close_by, &mut self.ant_func, dt);
+            match ant_action {
+                Action::Nothing => {}
+                Action::GoForward(length) => self.ants[i].ant.go_forward(length),
+                Action::RotateLeft(angle) => self.ants[i].ant.rotate_left(angle),
+                Action::RotateRight(angle) => self.ants[i].ant.rotate_right(angle),
+                Action::EatFood(food) => {
+                    // Find the corresponding food on the ground, not the cloned proxy element
+                    for orig_food_item in &mut self.food {
+                        if orig_food_item.food == food {
+                            self.ants[i].ant.eat_food(&mut orig_food_item.food);
+                        }
+                    }
+                }
+            }
+            self.ants[i].ant.energy -= self.config.ants.energy_loss; // Ants have to spend energy to be alive
 
-            Ground::<F>::push_ant_into_boundary(&ant, self.size);
+            Ground::<F>::push_ant_into_boundary(&mut self.ants[i], self.size);
         }
     }
 
     fn cleanup_ground(&mut self, _dt: Duration) {
-        self.ants.retain(|x| x.borrow().is_alive());
-        self.food.retain(|x| x.borrow().is_some_left());
+        self.ants.retain(|x| x.ant.is_alive());
+        self.food.retain(|x| x.food.is_some_left());
     }
 
     fn spawn_new_food(&mut self, _dt: Duration, display: &Display) {
@@ -190,7 +209,7 @@ where
         self.spawn_new_food(dt, display);
     }
 
-    pub fn ant_list(&self) -> &Vec<Rc<RefCell<Ant>>> {
+    pub fn ant_list(&self) -> &Vec<AntDrawable> {
         &self.ants
     }
 }
@@ -203,12 +222,12 @@ where
         // Todo
         self.rect.draw(target, cam);
 
-        for pellet in &self.food {
-            pellet.borrow_mut().draw(target, cam);
+        for pellet in &mut self.food {
+            pellet.draw(target, cam);
         }
 
-        for ant in &self.ants {
-            ant.borrow_mut().draw(target, cam);
+        for ant in &mut self.ants {
+            ant.draw(target, cam);
         }
     }
 }

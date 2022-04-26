@@ -2,21 +2,34 @@ use crate::helper::*;
 use crate::support::camera::Camera;
 use glium::{Display, Frame};
 
+pub struct FoodPelletDrawable {
+    pub food: FoodPellet,
+    rect: crate::primitives::rectangle::Rectangle,
+}
+
+#[derive(Clone, Copy)]
 pub struct FoodPellet {
     position: Vector2D,
     nutrition: u32,
     bite_size: u32,
-
-    //technical
-    rect: crate::primitives::rectangle::Rectangle,
+    id: usize,
 }
 
-impl FoodPellet {
-    pub fn new(nut:u32, display: &Display, bite_size: u32) -> FoodPellet {
-        FoodPellet {
-            position: Vector2D::new(0.0, 0.0),
-            nutrition: nut,
-            bite_size,
+impl PartialEq<FoodPellet> for FoodPellet {
+    fn eq(&self, other: &FoodPellet) -> bool {
+        self.id == other.id
+    }
+}
+
+impl FoodPelletDrawable {
+    pub fn new(id: usize, nut: u32, display: &Display, bite_size: u32) -> FoodPelletDrawable {
+        FoodPelletDrawable {
+            food: FoodPellet {
+                position: Vector2D::new(0.0, 0.0),
+                nutrition: nut,
+                bite_size,
+                id,
+            },
             rect: crate::primitives::rectangle::Rectangle::new(
                 Vector2D::new(5.0, 5.0),
                 Vector2D::new(2.5, 2.5),
@@ -27,11 +40,20 @@ impl FoodPellet {
         }
     }
 
-    pub fn new_at_pos(pos: Vector2D, nut:u32, display: &Display, bite_size: u32) -> FoodPellet {
-        FoodPellet {
-            position: pos,
-            nutrition: nut,
-            bite_size,
+    pub fn new_at_pos(
+        id: usize,
+        pos: Vector2D,
+        nut: u32,
+        display: &Display,
+        bite_size: u32,
+    ) -> FoodPelletDrawable {
+        FoodPelletDrawable {
+            food: FoodPellet {
+                position: pos,
+                nutrition: nut,
+                bite_size,
+                id,
+            },
             rect: crate::primitives::rectangle::Rectangle::new(
                 Vector2D::new(5.0, 5.0),
                 pos,
@@ -45,7 +67,9 @@ impl FoodPellet {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
         self.rect.draw(target, cam);
     }
+}
 
+impl FoodPellet {
     pub fn get_position(&self) -> Vector2D {
         self.position
     }

@@ -1,3 +1,5 @@
+use core::f32;
+
 use glium::{Frame, Surface};
 
 pub struct Camera {
@@ -7,6 +9,11 @@ pub struct Camera {
     pub position: [f32; 3],
     direction: [f32; 3],
     up: [f32; 3],
+}
+impl Default for Camera {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Camera {
@@ -137,7 +144,7 @@ impl Camera {
             let (width, height) = target.get_dimensions();
             let aspect_ratio = height as f32 / width as f32;
 
-            let fov: f32 = 3.141592 / 3.0;
+            let fov: f32 = std::f32::consts::PI / 3.0;
             let zfar = 1024.0;
             let znear = 0.1;
 

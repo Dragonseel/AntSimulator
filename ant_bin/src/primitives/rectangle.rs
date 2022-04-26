@@ -2,10 +2,7 @@ use super::vertex::Vertex;
 use crate::support::camera::Camera;
 use glium::{index::IndexBuffer, uniform, Display, Frame, Program, Surface, VertexBuffer};
 
-use crate::{
-    helper::{Rotation, Vector2D},
-    prelude::Color,
-};
+use crate::helper::{Color, Rotation, Vector2D};
 
 pub struct Rectangle {
     vertex_buffer: VertexBuffer<Vertex>,
