@@ -1,6 +1,6 @@
 use std::time::Duration;
 
-use crate::helper::{config::AntConfig, *};
+use crate::helper::*;
 use crate::items::food::FoodPellet;
 use crate::AntLogic;
 

@@ -1,8 +1,7 @@
 use crate::drawables::{AntDrawable, FoodPelletDrawable};
 use crate::support::camera::Camera;
-use common::animals::ant::{Action, Ant};
+use common::animals::ant::Action;
 use common::helper::*;
-use common::items::food::*;
 use common::AntLogic;
 
 use rand::prelude::*;

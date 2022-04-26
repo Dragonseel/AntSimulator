@@ -1,12 +1,13 @@
+use std::cell::RefCell;
+use std::rc::Rc;
+
 use common::animals::ant::{Action, Ant};
 use common::helper::{Vector2D, Vision};
 use common::items::food::FoodPellet;
-use std::cell::RefCell;
-use std::rc::{Rc, Weak};
 
 use rand::Rng;
+use support::simulator::Simulator;
 
-mod ant_impl;
 mod drawables;
 mod ground;
 mod primitives;
@@ -77,5 +78,28 @@ impl common::AntLogic for Logic {
 fn main() {
     let logic = Logic {};
 
-    ant_impl::start_simulation(logic);
+    let system = crate::support::init(file!());
+
+    let app = 
+        Rc::new(RefCell::new(Simulator::new(&system.display, logic)));
+
+    let app_ui = Rc::clone(&app);
+    let app_update = Rc::clone(&app);
+    let app_draw = Rc::clone(&app);
+
+    system.main_loop(
+        move |_run, ui| {
+            crate::support::ui::camera_control(ui, &app_ui);
+
+            crate::support::ui::simulation_control(ui, &app_ui);
+
+            crate::support::ui::statistics(ui, &app_ui);
+        },
+        move |dt, display| {
+            app_update.borrow_mut().update(dt, display);
+        },
+        move |target, _display| {
+            app_draw.borrow_mut().draw(target);
+        },
+    );
 }
