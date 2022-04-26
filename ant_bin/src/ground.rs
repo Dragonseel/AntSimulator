@@ -1,7 +1,9 @@
-use crate::animals::ant::{Action, Ant, AntDrawable};
-use crate::ant_impl::AntLogic;
-use crate::helper::*;
-use crate::{items::food::*, support::camera::Camera};
+use crate::drawables::{AntDrawable, FoodPelletDrawable};
+use crate::support::camera::Camera;
+use common::animals::ant::{Action, Ant};
+use common::helper::*;
+use common::items::food::*;
+use common::AntLogic;
 
 use rand::prelude::*;
 

@@ -2,15 +2,12 @@
 
 use std::{cell::RefCell, rc::Rc};
 
-use crate::{
+use crate::support::simulator::Simulator;
+use common::{
     animals::ant::{Action, Ant},
     helper::Vision,
-    support::simulator::Simulator,
+    AntLogic,
 };
-
-pub trait AntLogic {
-    fn update(&self, ant: &Ant, vision: &[Vision]) -> Action;
-}
 
 pub fn start_simulation<F>(ant_func: F)
 where

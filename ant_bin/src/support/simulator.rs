@@ -1,9 +1,8 @@
 use crate::{
-    ant_impl::AntLogic,
     ground,
-    helper::Vector2D,
     support::{self, camera::Camera},
 };
+use common::{helper::Vector2D, AntLogic};
 use glium::{Display, Frame, Surface};
 use std::time::Duration;
 

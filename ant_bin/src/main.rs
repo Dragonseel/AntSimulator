@@ -1,22 +1,20 @@
-use animals::ant::{Action, Ant};
-use helper::{Vector2D, Vision};
-use items::food::FoodPellet;
+use common::animals::ant::{Action, Ant};
+use common::helper::{Vector2D, Vision};
+use common::items::food::FoodPellet;
 use std::cell::RefCell;
 use std::rc::{Rc, Weak};
 
 use rand::Rng;
 
-mod animals;
 mod ant_impl;
+mod drawables;
 mod ground;
-mod helper;
-mod items;
 mod primitives;
 mod support;
 
 struct Logic {}
 
-impl ant_impl::AntLogic for Logic {
+impl common::AntLogic for Logic {
     fn update(&self, ant: &Ant, vision: &[Vision]) -> Action {
         let mut closest_food: Option<FoodPellet> = None;
         let mut min_dist = std::f32::MAX;

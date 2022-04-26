@@ -4,7 +4,7 @@ use imgui::{ChildWindow, Condition, Window};
 use std::{cell::RefCell, rc::Rc};
 
 use super::simulator::Simulator;
-use crate::{ant_impl::AntLogic, helper};
+use common::{helper, AntLogic};
 
 pub fn camera_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator<F>>>) {
     Window::new("Camera Control")
