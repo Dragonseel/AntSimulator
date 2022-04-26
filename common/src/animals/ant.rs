@@ -2,7 +2,6 @@ use std::time::Duration;
 
 use crate::helper::*;
 use crate::items::food::FoodPellet;
-use crate::AntLogic;
 
 pub enum Action {
     Nothing,
@@ -42,18 +41,6 @@ pub struct Ant {
 impl Ant {
     pub fn is_alive(&self) -> bool {
         self.energy != 0
-    }
-
-    pub fn update<F>(
-        &mut self,
-        other_elements: &Vec<Vision>,
-        ant_func: &mut F,
-        _dt: Duration,
-    ) -> Action
-    where
-        F: AntLogic,
-    {
-        ant_func.update(self, other_elements)
     }
 }
 

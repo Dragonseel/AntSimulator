@@ -86,10 +86,14 @@ pub fn init(title: &str) -> System {
 }
 
 impl System {
-    pub fn main_loop<Fui, Fupd, Fdraw>(self, mut run_ui: Fui, run_upd: Fupd, mut run_draw: Fdraw)
-    where
+    pub fn main_loop<Fui, Fupd, Fdraw>(
+        self,
+        mut run_ui: Fui,
+        mut run_upd: Fupd,
+        mut run_draw: Fdraw,
+    ) where
         Fui: FnMut(&mut bool, &mut Ui) + 'static,
-        Fupd: Fn(Duration, &Display) + 'static,
+        Fupd: FnMut(Duration, &Display) + 'static,
         Fdraw: FnMut(&mut Frame, &Display) + 'static,
     {
         let System {

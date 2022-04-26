@@ -4,9 +4,9 @@ use imgui::{ChildWindow, Condition, Window};
 use std::{cell::RefCell, rc::Rc};
 
 use super::simulator::Simulator;
-use common::{helper, AntLogic};
+use common::helper;
 
-pub fn camera_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator<F>>>) {
+pub fn camera_control(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
     Window::new("Camera Control")
         .size([50.0, 300.0], Condition::FirstUseEver)
         .position([50.0, 50.0], Condition::FirstUseEver)
@@ -37,7 +37,7 @@ pub fn camera_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCell<Si
         });
 }
 
-pub fn simulation_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator<F>>>) {
+pub fn simulation_control(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
     Window::new("Simulation Control")
         .size([300.0, 300.0], Condition::FirstUseEver)
         .position([50.0, 400.0], Condition::FirstUseEver)
@@ -88,7 +88,7 @@ pub fn simulation_control<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCel
         });
 }
 
-pub fn statistics<F: AntLogic + 'static>(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator<F>>>) {
+pub fn statistics(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
     Window::new("Statistics")
         .size([300.0, 300.0], Condition::FirstUseEver)
         .position([app_ui.borrow().size[0] - 350.0, 50.0], Condition::Always)

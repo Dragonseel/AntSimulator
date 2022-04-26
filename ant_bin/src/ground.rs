@@ -1,8 +1,8 @@
 use crate::drawables::{AntDrawable, FoodPelletDrawable};
 use crate::support::camera::Camera;
+use crate::AntFunc;
 use common::animals::ant::Action;
 use common::helper::*;
-use common::AntLogic;
 
 use rand::prelude::*;
 
@@ -10,7 +10,7 @@ use config::Config;
 use glium::{Display, Frame};
 use std::time::Duration;
 
-pub struct Ground<F: AntLogic> {
+pub struct Ground {
     size: Vector2D,
     food: Vec<FoodPelletDrawable>,
     ants: Vec<AntDrawable>,
@@ -22,14 +22,10 @@ pub struct Ground<F: AntLogic> {
     next_food_id: usize,
     rng: ThreadRng,
     rect: crate::primitives::rectangle::Rectangle,
-    ant_func: F,
 }
 
-impl<F> Ground<F>
-where
-    F: AntLogic,
-{
-    pub fn new_empty(size: Vector2D, ant_func: F, display: &Display) -> Ground<F> {
+impl Ground {
+    pub fn new_empty(size: Vector2D, display: &Display) -> Ground {
         let config = Config::new();
 
         Ground {
@@ -47,16 +43,12 @@ where
                 display,
             ),
             config,
-            ant_func,
         }
     }
 }
 
 // Generate Stuff
-impl<F> Ground<F>
-where
-    F: AntLogic,
-{
+impl Ground {
     pub fn num_ants(&self) -> usize {
         self.ants.len()
     }
@@ -105,10 +97,7 @@ where
 }
 
 // Update functions
-impl<F> Ground<F>
-where
-    F: AntLogic,
-{
+impl Ground {
     pub fn reset_food_time(&mut self) {
         self.food_timer = self.config.food.spawn_time;
     }
@@ -135,7 +124,7 @@ where
         }
     }
 
-    fn update_ants(&mut self, dt: Duration) {
+    fn update_ants(&mut self, dt: Duration, ant_func: AntFunc) {
         let num_ants = self.ants.len();
         let num_foods = self.food.len();
 
@@ -168,7 +157,7 @@ where
                 }
             }
 
-            let ant_action = self.ants[i].ant.update(&close_by, &mut self.ant_func, dt);
+            let ant_action = ant_func(&self.ants[i].ant, &close_by);
             match ant_action {
                 Action::Nothing => {}
                 Action::GoForward(length) => self.ants[i].ant.go_forward(length),
@@ -185,7 +174,7 @@ where
             }
             self.ants[i].ant.energy -= self.config.ants.energy_loss; // Ants have to spend energy to be alive
 
-            Ground::<F>::push_ant_into_boundary(&mut self.ants[i], self.size);
+            Ground::push_ant_into_boundary(&mut self.ants[i], self.size);
         }
     }
 
@@ -202,8 +191,8 @@ where
         }
     }
 
-    pub fn update(&mut self, dt: Duration, display: &Display) {
-        self.update_ants(dt);
+    pub fn update(&mut self, dt: Duration, display: &Display, ant_func: AntFunc) {
+        self.update_ants(dt, ant_func);
 
         self.cleanup_ground(dt);
 
@@ -215,10 +204,7 @@ where
     }
 }
 
-impl<F> Ground<F>
-where
-    F: AntLogic,
-{
+impl Ground {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
         // Todo
         self.rect.draw(target, cam);

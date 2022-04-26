@@ -1,16 +1,14 @@
 use crate::{
     ground,
     support::{self, camera::Camera},
+    AntFunc,
 };
-use common::{helper::Vector2D, AntLogic};
+use common::helper::Vector2D;
 use glium::{Display, Frame, Surface};
 use std::time::Duration;
 
-pub struct Simulator<F>
-where
-    F: AntLogic,
-{
-    pub ground: ground::Ground<F>,
+pub struct Simulator {
+    pub ground: ground::Ground,
     pub cam: Camera,
     pub new_round_pending: bool,
 
@@ -18,16 +16,9 @@ where
     pub size: [f32; 2],
 }
 
-impl<F> Simulator<F>
-where
-    F: AntLogic,
-{
-    pub fn new(display: &Display, ant_func: F) -> Simulator<F>
-    where
-        F: AntLogic,
-    {
-        let mut ground =
-            ground::Ground::new_empty(Vector2D::new(1000.0, 1000.0), ant_func, display);
+impl Simulator {
+    pub fn new(display: &Display) -> Simulator {
+        let mut ground = ground::Ground::new_empty(Vector2D::new(1000.0, 1000.0), display);
         ground.generate_ants(10, display);
         ground.generate_random_food(10, display);
 
@@ -43,14 +34,14 @@ where
         }
     }
 
-    pub fn update(&mut self, dt: Duration, display: &Display) {
+    pub fn update(&mut self, dt: Duration, display: &Display, ant_func: AntFunc) {
         if self.new_round_pending {
             self.ground.start_new_round(display);
             self.new_round_pending = false;
         }
 
         self.cam.update_view();
-        self.ground.update(dt, display)
+        self.ground.update(dt, display, ant_func);
     }
 
     pub fn draw(&mut self, frame: &mut Frame) {
