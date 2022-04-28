@@ -14,3 +14,4 @@ crate-type = ["dylib"]
 [dependencies]
 common = {path = "../common"}
 rand = "*"
+lazy_static = "*"

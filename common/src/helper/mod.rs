@@ -12,7 +12,14 @@ pub use color::*;
 pub use rotation::*;
 pub use vector2d::*;
 
-pub enum Vision {
-    Ant(Ant, f32),
-    Food(FoodPellet, f32),
+#[repr(C)]
+pub struct Vision {
+    pub object: SeenObject,
+    pub distance: f32,
+}
+
+#[repr(C)]
+pub enum SeenObject {
+    Ant(Ant),
+    Food(FoodPellet),
 }

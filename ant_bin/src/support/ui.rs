@@ -78,13 +78,16 @@ pub fn simulation_control(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
             );
 
             Drag::new("Ant Vision Range")
-                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.vision_range);
+                .build(ui, &mut (app_ui.borrow_mut()).ground.config.ants.vision_range);
 
             Drag::new("Ant Energy Loss")
                 .build(ui, &mut app_ui.borrow_mut().ground.config.ants.energy_loss);
 
-            Drag::new("Ant Start Amount")
-                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.start_amount);
+            ui.separator();
+            ui.text_colored(helper::RED.get_data(), "Nests");
+
+            Drag::new("Max Energy")
+                .build(ui, &mut app_ui.borrow_mut().ground.config.nests.max_energy);
         });
 }
 
@@ -112,15 +115,37 @@ pub fn statistics(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
                     for ant_drawable in app_ui.borrow().ground.ant_list() {
                         ui.text(ant_drawable.ant.id.to_string());
                         ui.next_column();
-                        let text = ant_drawable.ant.energy.to_string();
-                        ui.text(text);
+                        ui.text(ant_drawable.ant.energy.to_string());
                         ui.next_column();
                     }
 
                     ui.columns(1, "AntList_Inner", true);
                 });
-            ui.text("Testing");
 
             ui.text(format!("Num Foods: {}", app_ui.borrow().ground.num_foods()));
+
+            ui.columns(2, "Nest View", true);
+            ui.text("Nest");
+            ui.next_column();
+            ui.text("Energy");
+            ui.next_column();
+            ui.columns(1, "Main", false);
+
+            ChildWindow::new("NestList")
+                .size([250.0, 250.0])
+                .border(true)
+                .scroll_bar(true)
+                .build(ui, || {
+                    ui.columns(2, "NestList_Inner", true);
+
+                    for nest_drawable in app_ui.borrow().ground.nest_list() {
+                        ui.text(nest_drawable.nest.id.to_string());
+                        ui.next_column();
+                        ui.text(nest_drawable.nest.energy.to_string());
+                        ui.next_column();
+                    }
+
+                    ui.columns(1, "AntList_Inner", true);
+                });
         });
 }

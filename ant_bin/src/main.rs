@@ -2,13 +2,12 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Duration;
 
-use common::animals::ant::{Action, Ant};
-use common::helper::{Vector2D, Vision};
-use common::items::food::FoodPellet;
+use common::animals::ant::{Ant, AntAction};
+use common::buildings::{Nest, NestAction};
+use common::helper::Vision;
 
 use dynamic_reload::{DynamicReload, Symbol};
 use plugins::Plugins;
-use rand::Rng;
 use support::simulator::Simulator;
 
 mod drawables;
@@ -17,7 +16,8 @@ mod plugins;
 mod primitives;
 mod support;
 
-pub type AntFunc<'a> = Symbol<'a, extern "C" fn(&Ant, &[Vision]) -> Action>;
+pub type AntFunc<'a> = Symbol<'a, extern "C" fn(&Ant, &Vec<Vision>) -> AntAction>;
+pub type NestFunc<'a> = Symbol<'a, extern "C" fn(&Nest) -> NestAction>;
 
 fn main() {
     // let logic = Logic {};
@@ -77,7 +77,12 @@ fn main() {
                 let update_fun: AntFunc =
                     unsafe { plugs.plugins[0].lib.get(b"ant_update\0").unwrap() };
 
-                app_update.borrow_mut().update(dt, display, update_fun);
+                let nest_fun: NestFunc =
+                    unsafe { plugs.plugins[0].lib.get(b"nest_update\0").unwrap() };
+
+                app_update
+                    .borrow_mut()
+                    .update(dt, display, update_fun, nest_fun);
             }
         },
         move |target, _display| {

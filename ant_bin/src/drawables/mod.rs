@@ -1,4 +1,5 @@
 use common::{
+    buildings::Nest,
     helper::{config::AntConfig, Color, Rotation, Vector2D, BLUE},
     items::food::FoodPellet,
 };
@@ -35,7 +36,12 @@ impl AntDrawable {
         }
     }
 
-    pub fn new_at(id: i32, config: &AntConfig, pos: Vector2D, display: &Display) -> AntDrawable {
+    pub fn new_at_pos(
+        id: i32,
+        config: &AntConfig,
+        pos: Vector2D,
+        display: &Display,
+    ) -> AntDrawable {
         let mut ant_drawable = AntDrawable::new(id, config, display);
         ant_drawable.ant.position = pos;
         ant_drawable
@@ -91,6 +97,43 @@ impl FoodPelletDrawable {
                 pos,
                 Rotation::new_rad(0.0),
                 BLUE,
+                display,
+            ),
+        }
+    }
+
+    pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
+        self.rect.draw(target, cam);
+    }
+}
+
+pub struct NestDrawable {
+    pub nest: Nest,
+    rect: crate::primitives::rectangle::Rectangle,
+}
+
+impl NestDrawable {
+    pub fn new(id: usize, energy: u32, display: &Display) -> NestDrawable {
+        NestDrawable {
+            nest: Nest { id, energy, pos: Vector2D::new(0.0, 0.0) },
+            rect: crate::primitives::rectangle::Rectangle::new(
+                Vector2D::new(50.0, 50.0),
+                Vector2D::new(0.0, 0.0),
+                Rotation::new_rad(0.0),
+                common::helper::BLACK,
+                display,
+            ),
+        }
+    }
+
+    pub fn new_at_pos(id: usize, pos: Vector2D, energy: u32, display: &Display) -> NestDrawable {
+        NestDrawable {
+            nest: Nest { id, energy, pos},
+            rect: crate::primitives::rectangle::Rectangle::new(
+                Vector2D::new(50.0, 50.0),
+                pos,
+                Rotation::new_rad(0.0),
+                common::helper::BLACK,
                 display,
             ),
         }

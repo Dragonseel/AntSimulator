@@ -1,5 +1,6 @@
 use crate::helper::*;
 
+#[repr(C)]
 #[derive(Clone, Copy)]
 pub struct FoodPellet {
     pub position: Vector2D,

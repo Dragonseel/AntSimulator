@@ -1,7 +1,7 @@
 use crate::{
     ground,
     support::{self, camera::Camera},
-    AntFunc,
+    AntFunc, NestFunc,
 };
 use common::helper::Vector2D;
 use glium::{Display, Frame, Surface};
@@ -19,7 +19,7 @@ pub struct Simulator {
 impl Simulator {
     pub fn new(display: &Display) -> Simulator {
         let mut ground = ground::Ground::new_empty(Vector2D::new(1000.0, 1000.0), display);
-        ground.generate_ants(10, display);
+        ground.generate_colonies(display);
         ground.generate_random_food(10, display);
 
         Simulator {
@@ -34,14 +34,20 @@ impl Simulator {
         }
     }
 
-    pub fn update(&mut self, dt: Duration, display: &Display, ant_func: AntFunc) {
+    pub fn update(
+        &mut self,
+        dt: Duration,
+        display: &Display,
+        ant_func: AntFunc,
+        nest_func: NestFunc,
+    ) {
         if self.new_round_pending {
             self.ground.start_new_round(display);
             self.new_round_pending = false;
         }
 
         self.cam.update_view();
-        self.ground.update(dt, display, ant_func);
+        self.ground.update(dt, display, ant_func, nest_func);
     }
 
     pub fn draw(&mut self, frame: &mut Frame) {

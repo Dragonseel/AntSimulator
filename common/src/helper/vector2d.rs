@@ -1,6 +1,7 @@
 use super::Rotation;
 use std::ops::{Add, AddAssign, Mul, Sub};
 
+#[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct Vector2D([f32; 2]);
 impl Vector2D {

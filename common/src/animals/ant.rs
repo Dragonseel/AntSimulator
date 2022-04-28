@@ -1,9 +1,8 @@
-use std::time::Duration;
-
 use crate::helper::*;
 use crate::items::food::FoodPellet;
 
-pub enum Action {
+#[repr(C)]
+pub enum AntAction {
     Nothing,
     RotateLeft(f32),
     RotateRight(f32),
@@ -11,14 +10,14 @@ pub enum Action {
     EatFood(FoodPellet),
 }
 
-impl std::fmt::Display for Action {
+impl std::fmt::Display for AntAction {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
-            Action::Nothing => write!(f, "Nothing"),
-            Action::RotateLeft(angle) => write!(f, "RotateLeft({})", angle),
-            Action::RotateRight(angle) => write!(f, "RotateRight({})", angle),
-            Action::GoForward(length) => write!(f, "GoForward({})", length),
-            Action::EatFood(_) => write!(f, "EatFood"),
+            AntAction::Nothing => write!(f, "Nothing"),
+            AntAction::RotateLeft(angle) => write!(f, "RotateLeft({})", angle),
+            AntAction::RotateRight(angle) => write!(f, "RotateRight({})", angle),
+            AntAction::GoForward(length) => write!(f, "GoForward({})", length),
+            AntAction::EatFood(_) => write!(f, "EatFood"),
         }
     }
 }

@@ -12,13 +12,32 @@ impl GeneralConfig {
     }
 }
 
+pub struct NestConfig {
+    pub max_energy: u32,
+    pub start_energy: u32,
+}
+
+impl Default for NestConfig {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+impl NestConfig {
+    pub fn new() -> NestConfig {
+        NestConfig {
+            max_energy: 10000,
+            start_energy: 4000,
+        }
+    }
+}
+
 pub struct AntConfig {
     pub max_energy: u32,
     pub speed: f32,
     pub angular_speed: f32,
     pub vision_range: f32,
     pub energy_loss: u32,
-    pub start_amount: i32,
     pub mouth_reach: f32,
 }
 
@@ -36,7 +55,6 @@ impl AntConfig {
             angular_speed: 0.1,
             vision_range: 100.0,
             energy_loss: 1,
-            start_amount: 30,
             mouth_reach: 7.0,
         }
     }
@@ -68,6 +86,7 @@ impl FoodConfig {
 pub struct Config {
     pub ants: AntConfig,
     pub food: FoodConfig,
+    pub nests: NestConfig,
     pub general: GeneralConfig,
 }
 
@@ -82,6 +101,7 @@ impl Config {
         Config {
             ants: AntConfig::new(),
             food: FoodConfig::new(),
+            nests: NestConfig::new(),
             general: GeneralConfig::new(),
         }
     }
