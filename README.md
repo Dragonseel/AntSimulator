@@ -3,9 +3,20 @@
 A simple simulator that simulates the life of very simplified ants.
 They exist, they spend energy and they try to find food and eat it.
 
-The behavior of ants is in the ant_lib.
+In the beginning of a simulation, a nest exists. They spawn the ants.
+
+The behavior of ants and nests is in the ant_lib.
 The update-function is dynamically loaded into the application,
-so that the ant-logic is hot-reload-able.
+so that the ant-colony-logic is hot-reload-able.
+
+# Todo
+  - [x] Hot-Reloading
+  - [x] Nests
+  - [x] Proof-Of-Concept LazyStatic storage for Colony logic
+  - [ ] Ants can carry food
+  - [ ] Ants can deliver food to nest
+  - [ ] Way to calculate fitness/score
+
 
 ## License
 
