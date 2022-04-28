@@ -2,7 +2,6 @@ use crate::drawables::{AntDrawable, FoodPelletDrawable, NestDrawable};
 use crate::support::camera::Camera;
 use crate::{AntFunc, NestFunc};
 use common::animals::ant::AntAction;
-use common::buildings::Nest;
 use common::helper::*;
 
 use rand::prelude::*;
@@ -101,9 +100,6 @@ impl Ground {
 
     pub fn generate_ants(&mut self, nest_pos: Vector2D, amount: i32, display: &Display) {
         for i in 0..amount {
-            let x: f32 = self.rng.gen::<f32>() * self.size.x();
-            let y: f32 = self.rng.gen::<f32>() * self.size.y();
-
             let ant = AntDrawable::new_at_pos(i, &self.config.ants, nest_pos, display);
             self.ants.push(ant);
         }
@@ -181,7 +177,7 @@ impl Ground {
             let mut close_by: Vec<Vision> = Vec::new();
             for j in 0..num_ants {
                 if i != j {
-                    let other_ant = self.ants[j].ant.clone();
+                    let other_ant = self.ants[j].ant;
 
                     let distance = self.ants[i].ant.position.distance(other_ant.position);
 
@@ -204,7 +200,7 @@ impl Ground {
 
                 if distance < ant_vision {
                     close_by.push(Vision {
-                        object: SeenObject::Food(food_item.food.clone()),
+                        object: SeenObject::Food(food_item.food),
                         distance,
                     });
                 }

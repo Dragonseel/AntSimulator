@@ -77,8 +77,10 @@ pub fn simulation_control(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
                 &mut app_ui.borrow_mut().ground.config.ants.angular_speed,
             );
 
-            Drag::new("Ant Vision Range")
-                .build(ui, &mut (app_ui.borrow_mut()).ground.config.ants.vision_range);
+            Drag::new("Ant Vision Range").build(
+                ui,
+                &mut (app_ui.borrow_mut()).ground.config.ants.vision_range,
+            );
 
             Drag::new("Ant Energy Loss")
                 .build(ui, &mut app_ui.borrow_mut().ground.config.ants.energy_loss);

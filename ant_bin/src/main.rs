@@ -73,7 +73,7 @@ fn main() {
                 reload_handler.update(&Plugins::reload_callback, &mut plugs);
             }
 
-            if plugs.plugins.len() > 0 {
+            if !plugs.plugins.is_empty() {
                 let update_fun: AntFunc =
                     unsafe { plugs.plugins[0].lib.get(b"ant_update\0").unwrap() };
 

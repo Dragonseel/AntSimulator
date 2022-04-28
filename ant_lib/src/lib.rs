@@ -34,7 +34,7 @@ pub extern "C" fn ant_update(ant: &Ant, vision: &Vec<Vision>) -> AntAction {
         }
     }
 
-    let action = if let Some(food) = closest_food {
+    if let Some(food) = closest_food {
         if min_dist < ant.mouth_reach {
             // Ant is at Food
             AntAction::EatFood(food)
@@ -69,9 +69,7 @@ pub extern "C" fn ant_update(ant: &Ant, vision: &Vec<Vision>) -> AntAction {
             5 => AntAction::GoForward(100.0),
             _ => AntAction::GoForward(100.0),
         }
-    };
-
-    action
+    }
 }
 
 #[no_mangle]

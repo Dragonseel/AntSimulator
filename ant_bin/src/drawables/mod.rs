@@ -60,24 +60,6 @@ pub struct FoodPelletDrawable {
 }
 
 impl FoodPelletDrawable {
-    pub fn new(id: usize, nut: u32, display: &Display, bite_size: u32) -> FoodPelletDrawable {
-        FoodPelletDrawable {
-            food: FoodPellet {
-                position: Vector2D::new(0.0, 0.0),
-                nutrition: nut,
-                bite_size,
-                id,
-            },
-            rect: crate::primitives::rectangle::Rectangle::new(
-                Vector2D::new(5.0, 5.0),
-                Vector2D::new(2.5, 2.5),
-                Rotation::new_rad(0.0),
-                BLUE,
-                display,
-            ),
-        }
-    }
-
     pub fn new_at_pos(
         id: usize,
         pos: Vector2D,
@@ -113,22 +95,9 @@ pub struct NestDrawable {
 }
 
 impl NestDrawable {
-    pub fn new(id: usize, energy: u32, display: &Display) -> NestDrawable {
-        NestDrawable {
-            nest: Nest { id, energy, pos: Vector2D::new(0.0, 0.0) },
-            rect: crate::primitives::rectangle::Rectangle::new(
-                Vector2D::new(50.0, 50.0),
-                Vector2D::new(0.0, 0.0),
-                Rotation::new_rad(0.0),
-                common::helper::BLACK,
-                display,
-            ),
-        }
-    }
-
     pub fn new_at_pos(id: usize, pos: Vector2D, energy: u32, display: &Display) -> NestDrawable {
         NestDrawable {
-            nest: Nest { id, energy, pos},
+            nest: Nest { id, energy, pos },
             rect: crate::primitives::rectangle::Rectangle::new(
                 Vector2D::new(50.0, 50.0),
                 pos,
