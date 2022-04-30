@@ -221,7 +221,13 @@ impl Ground {
                     }
                 }
             }
-            self.ants[i].ant.energy -= self.config.ants.energy_loss; // Ants have to spend energy to be alive
+
+            self.ants[i].ant.rounds_to_energy_loss -= 1;
+            if self.ants[i].ant.rounds_to_energy_loss <= 0 {
+                self.ants[i].ant.energy -= self.config.ants.energy_loss_amount; // Ants have to spend energy to be alive
+
+                self.ants[i].ant.rounds_to_energy_loss = self.config.ants.energy_loss_rounds;
+            }
 
             Ground::push_ant_into_boundary(&mut self.ants[i], self.size);
         }

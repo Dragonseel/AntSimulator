@@ -37,7 +37,8 @@ pub struct AntConfig {
     pub speed: f32,
     pub angular_speed: f32,
     pub vision_range: f32,
-    pub energy_loss: u32,
+    pub energy_loss_amount: u32,
+    pub energy_loss_rounds: u32,
     pub mouth_reach: f32,
 }
 
@@ -54,7 +55,8 @@ impl AntConfig {
             speed: 1.0,
             angular_speed: 0.1,
             vision_range: 100.0,
-            energy_loss: 1,
+            energy_loss_amount: 1,
+            energy_loss_rounds: 5,
             mouth_reach: 7.0,
         }
     }

@@ -35,6 +35,7 @@ pub struct Ant {
     pub angular_speed: f32,
     pub max_energy: u32,
     pub mouth_reach: f32,
+    pub rounds_to_energy_loss: u32,
 }
 
 impl Ant {
