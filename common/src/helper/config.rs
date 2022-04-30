@@ -15,6 +15,8 @@ impl GeneralConfig {
 pub struct NestConfig {
     pub max_energy: u32,
     pub start_energy: u32,
+    pub energy_loss_amount: u32,
+    pub energy_loss_rounds: u32,
 }
 
 impl Default for NestConfig {
@@ -28,6 +30,8 @@ impl NestConfig {
         NestConfig {
             max_energy: 10000,
             start_energy: 4000,
+            energy_loss_amount: 1,
+            energy_loss_rounds: 5,
         }
     }
 }

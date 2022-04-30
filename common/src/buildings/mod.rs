@@ -9,6 +9,7 @@ pub enum NestAction {
 #[repr(C)]
 pub struct Nest {
     pub id: usize,
-    pub energy: u32,
     pub pos: Vector2D,
+    pub energy: u32,
+    pub rounds_to_energy_loss: u32,
 }

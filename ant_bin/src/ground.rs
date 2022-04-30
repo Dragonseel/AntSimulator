@@ -100,8 +100,9 @@ impl Ground {
 
     pub fn generate_ants(&mut self, nest_pos: Vector2D, amount: i32, display: &Display) {
         for i in 0..amount {
-            let ant = AntDrawable::new_at_pos(i, &self.config.ants, nest_pos, display);
+            let ant = AntDrawable::new_at_pos(self.next_ant_id, &self.config.ants, nest_pos, display);
             self.ants.push(ant);
+            self.next_ant_id += 1;
         }
     }
 
@@ -112,7 +113,7 @@ impl Ground {
         let new_colony = NestDrawable::new_at_pos(
             self.next_colony_id,
             Vector2D::new(x, y),
-            self.config.nests.start_energy,
+            &self.config.nests,
             display,
         );
 
@@ -163,6 +164,16 @@ impl Ground {
                         num -= 1;
                     }
                 }
+            }
+
+            self.nests[i].nest.rounds_to_energy_loss -= 1;
+            if self.nests[i].nest.rounds_to_energy_loss <= 0 {
+                self.nests[i].nest.energy = self.nests[i]
+                    .nest
+                    .energy
+                    .saturating_sub(self.config.nests.energy_loss_amount); // Nests have to spend energy to be alive
+
+                self.nests[i].nest.rounds_to_energy_loss = self.config.nests.energy_loss_rounds;
             }
         }
     }
@@ -224,7 +235,10 @@ impl Ground {
 
             self.ants[i].ant.rounds_to_energy_loss -= 1;
             if self.ants[i].ant.rounds_to_energy_loss <= 0 {
-                self.ants[i].ant.energy -= self.config.ants.energy_loss_amount; // Ants have to spend energy to be alive
+                self.ants[i].ant.energy = self.ants[i]
+                    .ant
+                    .energy
+                    .saturating_sub(self.config.ants.energy_loss_amount); // Ants have to spend energy to be alive
 
                 self.ants[i].ant.rounds_to_energy_loss = self.config.ants.energy_loss_rounds;
             }

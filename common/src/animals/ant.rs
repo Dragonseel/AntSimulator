@@ -27,7 +27,7 @@ impl std::fmt::Display for AntAction {
 pub struct Ant {
     pub position: Vector2D,
     pub energy: u32,
-    pub id: i32,
+    pub id: usize,
     pub color: Color,
     pub rotation: Rotation,
     pub size: Vector2D,

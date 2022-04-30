@@ -1,6 +1,9 @@
 use common::{
     buildings::Nest,
-    helper::{config::AntConfig, Color, Rotation, Vector2D, BLUE},
+    helper::{
+        config::{AntConfig, NestConfig},
+        Color, Rotation, Vector2D, BLUE,
+    },
     items::food::FoodPellet,
 };
 use glium::{Display, Frame};
@@ -13,7 +16,7 @@ pub struct AntDrawable {
 }
 
 impl AntDrawable {
-    pub fn new(id: i32, config: &AntConfig, display: &Display) -> AntDrawable {
+    pub fn new(id: usize, config: &AntConfig, display: &Display) -> AntDrawable {
         let size = Vector2D::new(16.0, 7.0);
         let position = Vector2D::new(50.0, 50.0);
         let rotation = Rotation::new_rad(0.0f32);
@@ -38,7 +41,7 @@ impl AntDrawable {
     }
 
     pub fn new_at_pos(
-        id: i32,
+        id: usize,
         config: &AntConfig,
         pos: Vector2D,
         display: &Display,
@@ -96,9 +99,19 @@ pub struct NestDrawable {
 }
 
 impl NestDrawable {
-    pub fn new_at_pos(id: usize, pos: Vector2D, energy: u32, display: &Display) -> NestDrawable {
+    pub fn new_at_pos(
+        id: usize,
+        pos: Vector2D,
+        config: &NestConfig,
+        display: &Display,
+    ) -> NestDrawable {
         NestDrawable {
-            nest: Nest { id, energy, pos },
+            nest: Nest {
+                id,
+                energy: config.start_energy,
+                pos,
+                rounds_to_energy_loss: config.energy_loss_rounds,
+            },
             rect: crate::primitives::rectangle::Rectangle::new(
                 Vector2D::new(50.0, 50.0),
                 pos,

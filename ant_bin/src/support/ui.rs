@@ -82,11 +82,15 @@ pub fn simulation_control(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
                 &mut (app_ui.borrow_mut()).ground.config.ants.vision_range,
             );
 
-            Drag::new("Ant Energy Loss Amount")
-                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.energy_loss_amount);
-            
-            Drag::new("Ant lose energy after rounds")
-                .build(ui, &mut app_ui.borrow_mut().ground.config.ants.energy_loss_rounds);
+            Drag::new("Ant Energy Loss Amount").build(
+                ui,
+                &mut app_ui.borrow_mut().ground.config.ants.energy_loss_amount,
+            );
+
+            Drag::new("Ant lose energy after rounds").build(
+                ui,
+                &mut app_ui.borrow_mut().ground.config.ants.energy_loss_rounds,
+            );
 
             ui.separator();
             ui.text_colored(helper::RED.get_data(), "Nests");
