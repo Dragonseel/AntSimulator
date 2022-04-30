@@ -37,7 +37,12 @@ pub extern "C" fn ant_update(ant: &Ant, vision: &Vec<Vision>) -> AntAction {
     if let Some(food) = closest_food {
         if min_dist < ant.mouth_reach {
             // Ant is at Food
-            AntAction::EatFood(food)
+
+            if ant.energy >= (ant.max_energy - food.bite_size) {
+                AntAction::CarryFood(food)
+            } else {
+                AntAction::EatFood(food)
+            }
         } else {
             // Go To Food
             let food_pos = food.get_position();

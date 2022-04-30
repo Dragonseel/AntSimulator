@@ -1,3 +1,4 @@
+use crate::helper::config::AntConfig;
 use crate::helper::*;
 use crate::items::food::FoodPellet;
 
@@ -8,6 +9,7 @@ pub enum AntAction {
     RotateRight(f32),
     GoForward(f32),
     EatFood(FoodPellet),
+    CarryFood(FoodPellet),
 }
 
 impl std::fmt::Display for AntAction {
@@ -18,6 +20,7 @@ impl std::fmt::Display for AntAction {
             AntAction::RotateRight(angle) => write!(f, "RotateRight({})", angle),
             AntAction::GoForward(length) => write!(f, "GoForward({})", length),
             AntAction::EatFood(_) => write!(f, "EatFood"),
+            AntAction::CarryFood(_) => write!(f, "CarryFood"),
         }
     }
 }
@@ -36,6 +39,7 @@ pub struct Ant {
     pub max_energy: u32,
     pub mouth_reach: f32,
     pub rounds_to_energy_loss: u32,
+    pub carrying: u32,
 }
 
 impl Ant {
@@ -43,13 +47,6 @@ impl Ant {
         self.energy != 0
     }
 }
-
-// Getters
-// impl Ant {
-//     fn get_mouth_position(&self) -> Vector2D {
-//         Vector2D::new(self.position.x()+0.5*self.size.x(), self.position.y())
-//     }
-// }
 
 // Actions
 impl Ant {
@@ -64,6 +61,13 @@ impl Ant {
         // }
         self.energy += food.get_eaten();
         self.energy = self.energy.min(self.max_energy);
+    }
+
+    pub fn carry_food(&mut self, food: &mut FoodPellet, config: &AntConfig) {
+        let capacity_left = config.carry_capacity - self.carrying;
+        let amount_got = u32::min(capacity_left, food.nutrition);
+        food.nutrition -= amount_got;
+        self.carrying += amount_got;
     }
 
     pub fn go_forward(&mut self, length: f32) {

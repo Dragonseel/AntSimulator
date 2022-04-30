@@ -35,6 +35,7 @@ impl AntDrawable {
                 max_energy: config.max_energy,
                 mouth_reach: config.mouth_reach,
                 rounds_to_energy_loss: config.energy_loss_rounds,
+                carrying: 0,
             },
             rect: Rectangle::new(size, position, rotation, color, display),
         }

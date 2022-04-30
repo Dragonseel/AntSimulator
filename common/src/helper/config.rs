@@ -44,6 +44,7 @@ pub struct AntConfig {
     pub energy_loss_amount: u32,
     pub energy_loss_rounds: u32,
     pub mouth_reach: f32,
+    pub carry_capacity: u32,
 }
 
 impl Default for AntConfig {
@@ -62,6 +63,7 @@ impl AntConfig {
             energy_loss_amount: 1,
             energy_loss_rounds: 5,
             mouth_reach: 7.0,
+            carry_capacity: 4000,
         }
     }
 }

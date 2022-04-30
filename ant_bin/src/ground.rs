@@ -53,7 +53,6 @@ impl Ground {
     }
 }
 
-// Generate Stuff
 impl Ground {
     pub fn num_ants(&self) -> usize {
         self.ants.len()
@@ -79,8 +78,10 @@ impl Ground {
         self.generate_colonies(display);
         self.generate_random_food(self.config.food.start_amount, display);
     }
+}
 
-    pub fn generate_random_food(&mut self, amount: i32, display: &Display) {
+impl Ground {
+    fn generate_random_food(&mut self, amount: i32, display: &Display) {
         for _i in 0..amount {
             let x: f32 = self.rng.gen::<f32>() * self.size.x();
             let y: f32 = self.rng.gen::<f32>() * self.size.y();
@@ -98,15 +99,16 @@ impl Ground {
         }
     }
 
-    pub fn generate_ants(&mut self, nest_pos: Vector2D, amount: i32, display: &Display) {
-        for i in 0..amount {
-            let ant = AntDrawable::new_at_pos(self.next_ant_id, &self.config.ants, nest_pos, display);
+    fn generate_ants(&mut self, nest_pos: Vector2D, amount: i32, display: &Display) {
+        for _ in 0..amount {
+            let ant =
+                AntDrawable::new_at_pos(self.next_ant_id, &self.config.ants, nest_pos, display);
             self.ants.push(ant);
             self.next_ant_id += 1;
         }
     }
 
-    pub fn generate_colonies(&mut self, display: &Display) {
+    fn generate_colonies(&mut self, display: &Display) {
         let x: f32 = self.rng.gen::<f32>() * self.size.x();
         let y: f32 = self.rng.gen::<f32>() * self.size.y();
 
@@ -121,10 +123,7 @@ impl Ground {
 
         self.next_colony_id += 1;
     }
-}
 
-// Update functions
-impl Ground {
     pub fn reset_food_time(&mut self) {
         self.food_timer = self.config.food.spawn_time;
     }
@@ -231,6 +230,14 @@ impl Ground {
                         }
                     }
                 }
+                AntAction::CarryFood(food) => {
+                    // Find the corresponding food on the ground, not the cloned proxy element
+                    for orig_food_item in &mut self.food {
+                        if orig_food_item.food == food {
+                            self.ants[i].ant.carry_food(&mut orig_food_item.food, &self.config.ants);
+                        }
+                    }
+                }
             }
 
             self.ants[i].ant.rounds_to_energy_loss -= 1;
@@ -250,6 +257,7 @@ impl Ground {
     fn cleanup_ground(&mut self, _dt: Duration) {
         self.ants.retain(|x| x.ant.is_alive());
         self.food.retain(|x| x.food.is_some_left());
+        self.nests.retain(|x| x.nest.is_alive());
     }
 
     fn spawn_new_food(&mut self, _dt: Duration, display: &Display) {
@@ -286,7 +294,6 @@ impl Ground {
 
 impl Ground {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        // Todo
         self.rect.draw(target, cam);
 
         for colony in &mut self.nests {

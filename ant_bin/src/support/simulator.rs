@@ -19,8 +19,8 @@ pub struct Simulator {
 impl Simulator {
     pub fn new(display: &Display) -> Simulator {
         let mut ground = ground::Ground::new_empty(Vector2D::new(1000.0, 1000.0), display);
-        ground.generate_colonies(display);
-        ground.generate_random_food(10, display);
+
+        ground.start_new_round(display);
 
         Simulator {
             ground,

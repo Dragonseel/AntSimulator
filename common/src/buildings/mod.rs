@@ -13,3 +13,9 @@ pub struct Nest {
     pub energy: u32,
     pub rounds_to_energy_loss: u32,
 }
+
+impl Nest {
+    pub fn is_alive(&self) -> bool {
+        self.energy > 0
+    }
+}

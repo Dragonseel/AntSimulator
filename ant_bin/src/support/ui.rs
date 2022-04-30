@@ -107,10 +107,12 @@ pub fn statistics(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
         .build(ui, || {
             ui.text(format!("Num Ants: {}", app_ui.borrow().ground.num_ants()));
 
-            ui.columns(2, "Ant View", true);
+            ui.columns(3, "Ant View", true);
             ui.text("Ant");
             ui.next_column();
             ui.text("Food");
+            ui.next_column();
+            ui.text("Carrying");
             ui.next_column();
             ui.columns(1, "Main", false);
 
@@ -119,12 +121,14 @@ pub fn statistics(ui: &mut Ui, app_ui: &Rc<RefCell<Simulator>>) {
                 .border(true)
                 .scroll_bar(true)
                 .build(ui, || {
-                    ui.columns(2, "AntList_Inner", true);
+                    ui.columns(3, "AntList_Inner", true);
 
                     for ant_drawable in app_ui.borrow().ground.ant_list() {
                         ui.text(ant_drawable.ant.id.to_string());
                         ui.next_column();
                         ui.text(ant_drawable.ant.energy.to_string());
+                        ui.next_column();
+                        ui.text(ant_drawable.ant.carrying.to_string());
                         ui.next_column();
                     }
 
