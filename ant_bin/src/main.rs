@@ -18,6 +18,7 @@ mod support;
 
 pub type AntFunc<'a> = Symbol<'a, extern "C" fn(&Ant, &Vec<Vision>) -> AntAction>;
 pub type NestFunc<'a> = Symbol<'a, extern "C" fn(&Nest) -> NestAction>;
+pub type ResetFunc<'a> = Symbol<'a, extern "C" fn()>;
 
 fn main() {
     // let logic = Logic {};
@@ -80,9 +81,10 @@ fn main() {
                 let nest_fun: NestFunc =
                     unsafe { plugs.plugins[0].lib.get(b"nest_update\0").unwrap() };
 
+                let reset_fun: ResetFunc = unsafe { plugs.plugins[0].lib.get(b"reset\0").unwrap() };
                 app_update
                     .borrow_mut()
-                    .update(dt, display, update_fun, nest_fun);
+                    .update(dt, display, update_fun, nest_fun, reset_fun);
             }
         },
         move |target, _display| {

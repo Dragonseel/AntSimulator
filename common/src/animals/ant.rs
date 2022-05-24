@@ -10,6 +10,7 @@ pub enum AntAction {
     GoForward(f32),
     EatFood(FoodPellet),
     CarryFood(FoodPellet),
+    UnloadFood,
 }
 
 impl std::fmt::Display for AntAction {
@@ -21,6 +22,7 @@ impl std::fmt::Display for AntAction {
             AntAction::GoForward(length) => write!(f, "GoForward({})", length),
             AntAction::EatFood(_) => write!(f, "EatFood"),
             AntAction::CarryFood(_) => write!(f, "CarryFood"),
+            AntAction::UnloadFood => write!(f, "UnloadFood"),
         }
     }
 }
@@ -68,6 +70,13 @@ impl Ant {
         let amount_got = u32::min(capacity_left, food.nutrition);
         food.nutrition -= amount_got;
         self.carrying += amount_got;
+    }
+
+    /// Removes the carried food from the ant
+    pub fn unload_food(&mut self, config: &AntConfig) -> u32 {
+        let carrying = self.carrying;
+        self.carrying = 0;
+        carrying
     }
 
     pub fn go_forward(&mut self, length: f32) {

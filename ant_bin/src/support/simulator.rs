@@ -1,7 +1,7 @@
 use crate::{
     ground,
     support::{self, camera::Camera},
-    AntFunc, NestFunc,
+    AntFunc, NestFunc, ResetFunc,
 };
 use common::helper::Vector2D;
 use glium::{Display, Frame, Surface};
@@ -40,6 +40,7 @@ impl Simulator {
         display: &Display,
         ant_func: AntFunc,
         nest_func: NestFunc,
+        reset_func: ResetFunc,
     ) {
         if self.new_round_pending {
             self.ground.start_new_round(display);
@@ -47,7 +48,7 @@ impl Simulator {
         }
 
         self.cam.update_view();
-        self.ground.update(dt, display, ant_func, nest_func);
+        self.ground.update(dt, display, ant_func, nest_func, reset_func);
     }
 
     pub fn draw(&mut self, frame: &mut Frame) {

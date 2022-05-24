@@ -1,6 +1,6 @@
 use crate::drawables::{AntDrawable, FoodPelletDrawable, NestDrawable};
 use crate::support::camera::Camera;
-use crate::{AntFunc, NestFunc};
+use crate::{AntFunc, NestFunc, ResetFunc};
 use common::animals::ant::AntAction;
 use common::helper::*;
 
@@ -18,6 +18,8 @@ pub struct Ground {
     food_timer: i32,
 
     pub config: Config,
+
+    new_round_pending: bool,
 
     // technical
     next_food_id: usize,
@@ -49,6 +51,7 @@ impl Ground {
                 display,
             ),
             config,
+            new_round_pending: true,
         }
     }
 }
@@ -67,16 +70,7 @@ impl Ground {
     }
 
     pub fn start_new_round(&mut self, display: &Display) {
-        self.ants.clear();
-        self.food.clear();
-        self.nests.clear();
-
-        self.next_food_id = 0;
-        self.next_colony_id = 0;
-        self.next_ant_id = 0;
-
-        self.generate_colonies(display);
-        self.generate_random_food(self.config.food.start_amount, display);
+        self.new_round_pending = true;
     }
 }
 
@@ -177,7 +171,7 @@ impl Ground {
         }
     }
 
-    fn update_ants(&mut self, _dt: Duration, ant_func: AntFunc) {
+    fn update_ants(&mut self, _dt: Duration, ant_func: AntFunc, display: &Display) {
         let num_ants = self.ants.len();
         let num_foods = self.food.len();
 
@@ -234,8 +228,44 @@ impl Ground {
                     // Find the corresponding food on the ground, not the cloned proxy element
                     for orig_food_item in &mut self.food {
                         if orig_food_item.food == food {
-                            self.ants[i].ant.carry_food(&mut orig_food_item.food, &self.config.ants);
+                            self.ants[i]
+                                .ant
+                                .carry_food(&mut orig_food_item.food, &self.config.ants);
                         }
+                    }
+                }
+                AntAction::UnloadFood => {
+                    println!("Ground knows ant wants to unload");
+                    let mut first_closeby_nest = None;
+                    for (idx, nest) in self.nests.iter().enumerate() {
+                        if nest.nest.pos.distance(self.ants[i].ant.position)
+                            < self.config.ants.mouth_reach
+                        {
+                            first_closeby_nest = Some(idx);
+
+                            break;
+                        }
+                    }
+
+                    if let Some(nest) = first_closeby_nest {
+                        // Found some nest
+                        println!("Unloads at a nest");
+                        self.nests[nest].nest.energy +=
+                            self.ants[i].ant.unload_food(&self.config.ants);
+                    } else {
+                        println!("Creates a new food item by unloading.");
+                        let unloaded_food = self.ants[i].ant.unload_food(&self.config.ants);
+
+                        let new_food = FoodPelletDrawable::new_at_pos(
+                            self.next_food_id,
+                            self.ants[i].ant.position,
+                            unloaded_food,
+                            display,
+                            self.config.food.eaten_value,
+                        );
+                        self.food.push(new_food);
+
+                        self.next_food_id += 1;
                     }
                 }
             }
@@ -274,9 +304,27 @@ impl Ground {
         display: &Display,
         ant_func: AntFunc,
         nest_func: NestFunc,
+        reset_func: ResetFunc,
     ) {
+        if self.new_round_pending {
+            self.new_round_pending = false;
+
+            reset_func();
+
+            self.ants.clear();
+            self.food.clear();
+            self.nests.clear();
+
+            self.next_food_id = 0;
+            self.next_colony_id = 0;
+            self.next_ant_id = 0;
+
+            self.generate_colonies(display);
+            self.generate_random_food(self.config.food.start_amount, display);
+        }
+
         self.update_nests(dt, nest_func, display);
-        self.update_ants(dt, ant_func);
+        self.update_ants(dt, ant_func, display);
 
         self.cleanup_ground(dt);
 
