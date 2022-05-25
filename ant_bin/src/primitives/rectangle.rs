@@ -1,6 +1,10 @@
+use std::io::Cursor;
+
 use super::vertex::Vertex;
 use crate::support::camera::Camera;
-use glium::{index::IndexBuffer, uniform, Display, Frame, Program, Surface, VertexBuffer};
+use glium::{
+    index::IndexBuffer, uniform, Display, Frame, Program, Surface, Texture2d, VertexBuffer, DrawParameters, Blend,
+};
 
 use common::helper::{Color, Rotation, Vector2D};
 
@@ -35,10 +39,26 @@ impl Rectangle {
         //  2--------3
         // at rotation 0
         //
-        let vertex0 = Vertex::new([-0.5 * size.x(), -0.5 * size.y()], color.get_data());
-        let vertex1 = Vertex::new([0.5 * size.x(), -0.5 * size.y()], color.get_data());
-        let vertex2 = Vertex::new([-0.5 * size.x(), 0.5 * size.y()], color.get_data());
-        let vertex3 = Vertex::new([0.5 * size.x(), 0.5 * size.y()], color.get_data());
+        let vertex0 = Vertex::new(
+            [-0.5 * size.x(), -0.5 * size.y()],
+            color.get_data(),
+            [0.0, 0.0],
+        );
+        let vertex1 = Vertex::new(
+            [0.5 * size.x(), -0.5 * size.y()],
+            color.get_data(),
+            [1.0, 0.0],
+        );
+        let vertex2 = Vertex::new(
+            [-0.5 * size.x(), 0.5 * size.y()],
+            color.get_data(),
+            [0.0, 1.0],
+        );
+        let vertex3 = Vertex::new(
+            [0.5 * size.x(), 0.5 * size.y()],
+            color.get_data(),
+            [1.0, 1.0],
+        );
         let shape = vec![vertex0, vertex1, vertex2, vertex3];
 
         let vertex_buffer = glium::VertexBuffer::new(display, &shape).unwrap();
@@ -54,24 +74,30 @@ impl Rectangle {
 
 in vec2 position;
 in vec4 color;
+in vec2 uv;
 uniform mat4 model_mat;
 uniform mat4 view_mat;
 uniform mat4 proj_mat;
 out vec4 my_attr;
-
+out vec2 out_uv;
 
 void main() {
     my_attr = color;
+    out_uv = uv;
     gl_Position = proj_mat * view_mat * model_mat * vec4(position, 0.0, 1.0);
 }
 "#;
 
         let fragment_shader_src = r#"
 #version 140
+
+uniform sampler2D tex;
+
 in vec4 my_attr;
+in vec2 out_uv;
 out vec4 color;
 void main() {
-    color = my_attr;
+    color = texture(tex, out_uv);
 }
 "#;
 
@@ -90,7 +116,7 @@ void main() {
         }
     }
 
-    pub fn draw(&mut self, frame: &mut Frame, cam: &Camera) {
+    pub fn draw(&mut self, texture: &Texture2d, frame: &mut Frame, cam: &Camera) {
         let model_mat = [
             [
                 self.rotation.get_rad().cos(),
@@ -112,7 +138,11 @@ void main() {
             model_mat: model_mat,
             view_mat: cam.view_mat,
             proj_mat: cam.proj_mat,
+            tex: texture,
         };
+
+        let mut draw_params = DrawParameters::default();
+        draw_params.blend = Blend::alpha_blending();
 
         frame
             .draw(
@@ -120,7 +150,7 @@ void main() {
                 &self.indices,
                 &self.program,
                 &uniforms,
-                &Default::default(),
+                &draw_params,
             )
             .unwrap();
     }

@@ -1,5 +1,6 @@
 use crate::drawables::{AntDrawable, FoodPelletDrawable, NestDrawable};
 use crate::support::camera::Camera;
+use crate::support::textures::TextureContainer;
 use crate::{AntFunc, NestFunc, ResetFunc};
 use common::animals::ant::AntAction;
 use common::helper::*;
@@ -27,11 +28,13 @@ pub struct Ground {
     next_ant_id: usize,
     rng: ThreadRng,
     rect: crate::primitives::rectangle::Rectangle,
+    texture_container: TextureContainer,
 }
 
 impl Ground {
     pub fn new_empty(size: Vector2D, display: &Display) -> Ground {
         let config = Config::new();
+        let texture_container = TextureContainer::new(display);
 
         Ground {
             food: Vec::new(),
@@ -52,6 +55,7 @@ impl Ground {
             ),
             config,
             new_round_pending: true,
+            texture_container,
         }
     }
 }
@@ -95,8 +99,13 @@ impl Ground {
 
     fn generate_ants(&mut self, nest_pos: Vector2D, amount: i32, display: &Display) {
         for _ in 0..amount {
-            let ant =
-                AntDrawable::new_at_pos(self.next_ant_id, &self.config.ants, nest_pos, display);
+            let ant = AntDrawable::new_at_pos(
+                self.next_ant_id,
+                &self.config.ants,
+                &self.texture_container,
+                nest_pos,
+                display,
+            );
             self.ants.push(ant);
             self.next_ant_id += 1;
         }
@@ -110,6 +119,7 @@ impl Ground {
             self.next_colony_id,
             Vector2D::new(x, y),
             &self.config.nests,
+            &self.texture_container,
             display,
         );
 
@@ -342,18 +352,19 @@ impl Ground {
 
 impl Ground {
     pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.draw(target, cam);
+        self.rect
+            .draw(&self.texture_container.ground_texture, target, cam);
 
         for colony in &mut self.nests {
-            colony.draw(target, cam);
+            colony.draw(&self.texture_container.nest_texture, target, cam);
         }
 
         for pellet in &mut self.food {
-            pellet.draw(target, cam);
+            pellet.draw(&self.texture_container.food_texture, target, cam);
         }
 
         for ant in &mut self.ants {
-            ant.draw(target, cam);
+            ant.draw(&self.texture_container.ant_texture, target, cam);
         }
     }
 }

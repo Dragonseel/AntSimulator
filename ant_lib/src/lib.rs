@@ -165,14 +165,13 @@ pub extern "C" fn ant_update(ant: &Ant, vision: &Vec<Vision>) -> AntAction {
                 }
 
                 let nest_option = ANTMEMORY
-                .lock()
-                .unwrap()
-                .entry(ant.id)
-                .or_default()
-                .nest_pos;
+                    .lock()
+                    .unwrap()
+                    .entry(ant.id)
+                    .or_default()
+                    .nest_pos;
 
-                if let Some(nest_pos) = nest_option
-                {
+                if let Some(nest_pos) = nest_option {
                     if ant.position.distance(nest_pos) <= ant.mouth_reach {
                         // We are there, we can unload at the nest and continue searching
                         println!("Ant wants to unload.");
@@ -208,7 +207,6 @@ pub extern "C" fn ant_update(ant: &Ant, vision: &Vec<Vision>) -> AntAction {
 
 #[no_mangle]
 pub extern "C" fn nest_update(nest: &Nest) -> NestAction {
-    
     /*
     // for debugging, only spawn a single ant ever
     if *FRAMECOUNTER.lock().unwrap() == 0 {
@@ -219,7 +217,6 @@ pub extern "C" fn nest_update(nest: &Nest) -> NestAction {
     }
     */
 
-    
     if nest.energy > 1000 && *FRAMECOUNTER.lock().unwrap() >= 60 {
         *FRAMECOUNTER.lock().unwrap() = 0;
         NestAction::SpawnAnts(1)
@@ -227,7 +224,6 @@ pub extern "C" fn nest_update(nest: &Nest) -> NestAction {
         *FRAMECOUNTER.lock().unwrap() += 1;
         NestAction::Nothing
     }
-    
 }
 
 #[no_mangle]

@@ -48,7 +48,8 @@ impl Simulator {
         }
 
         self.cam.update_view();
-        self.ground.update(dt, display, ant_func, nest_func, reset_func);
+        self.ground
+            .update(dt, display, ant_func, nest_func, reset_func);
     }
 
     pub fn draw(&mut self, frame: &mut Frame) {

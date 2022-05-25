@@ -6,9 +6,12 @@ use common::{
     },
     items::food::FoodPellet,
 };
-use glium::{Display, Frame};
+use glium::{Display, Frame, Texture2d};
 
-use crate::{primitives::rectangle::Rectangle, support::camera::Camera};
+use crate::{
+    primitives::rectangle::Rectangle,
+    support::{camera::Camera, textures::TextureContainer},
+};
 
 pub struct AntDrawable {
     pub ant: common::animals::ant::Ant,
@@ -44,6 +47,7 @@ impl AntDrawable {
     pub fn new_at_pos(
         id: usize,
         config: &AntConfig,
+        texture_container: &TextureContainer,
         pos: Vector2D,
         display: &Display,
     ) -> AntDrawable {
@@ -52,10 +56,10 @@ impl AntDrawable {
         ant_drawable
     }
 
-    pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
+    pub fn draw(&mut self, texture: &Texture2d, target: &mut Frame, cam: &Camera) {
         self.rect.position = self.ant.position; //- 0.5 * self.size; // * self.rotation);
         self.rect.rotation = self.ant.rotation;
-        self.rect.draw(target, cam);
+        self.rect.draw(texture, target, cam);
     }
 }
 
@@ -89,8 +93,8 @@ impl FoodPelletDrawable {
         }
     }
 
-    pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.draw(target, cam);
+    pub fn draw(&mut self, texture: &Texture2d, target: &mut Frame, cam: &Camera) {
+        self.rect.draw(texture, target, cam);
     }
 }
 
@@ -104,6 +108,7 @@ impl NestDrawable {
         id: usize,
         pos: Vector2D,
         config: &NestConfig,
+        texture_container: &TextureContainer,
         display: &Display,
     ) -> NestDrawable {
         NestDrawable {
@@ -123,7 +128,7 @@ impl NestDrawable {
         }
     }
 
-    pub fn draw(&mut self, target: &mut Frame, cam: &Camera) {
-        self.rect.draw(target, cam);
+    pub fn draw(&mut self, texture: &Texture2d, target: &mut Frame, cam: &Camera) {
+        self.rect.draw(texture, target, cam);
     }
 }
